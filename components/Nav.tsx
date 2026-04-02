@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 
+const GOVTRACE_DEMO_URL = 'https://govtrace-ai.vercel.app'
+
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -45,7 +47,9 @@ export default function Nav() {
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
           <a
-            href="#govtrace"
+            href={GOVTRACE_DEMO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             className="text-sm font-medium text-accent border border-accent/40 px-4 py-2 rounded-lg hover:bg-accent/10 transition-colors"
           >
             Try GoVTraceAI
@@ -86,7 +90,9 @@ export default function Nav() {
       {menuOpen && (
         <div className="md:hidden bg-[#080808]/95 backdrop-blur-md border-t border-white/[0.06] px-6 py-6 flex flex-col gap-4">
           <a
-            href="#govtrace"
+            href={GOVTRACE_DEMO_URL}
+            target="_blank"
+            rel="noopener noreferrer"
             onClick={() => setMenuOpen(false)}
             className="text-sm font-medium text-accent border border-accent/40 px-4 py-3 rounded-lg hover:bg-accent/10 transition-colors text-center"
           >
