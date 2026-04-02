@@ -15,25 +15,57 @@ type IframeFallbackProps = {
 }
 
 function IframeFallback({ demoUrl }: IframeFallbackProps) {
+  const hasExternalDemo = Boolean(demoUrl)
+
   return (
-    <div className="flex flex-col items-center justify-center gap-6 py-16 px-8 text-center bg-[#0A0A0A]">
-      <p className="text-[18px] font-bold text-[#F5F5F5]">Live demo unavailable</p>
-      <p className="text-[14px] text-[#8A8A8A] max-w-md">
-        The interactive demo is temporarily unavailable. Please try again later.
-      </p>
-      {demoUrl && (
-        <a
-          href={demoUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 bg-accent text-white font-semibold text-[14px] px-6 py-3 rounded-xl hover:bg-[#c44625] active:scale-[0.98] transition-all shadow-lg shadow-accent/20"
-        >
-          Open Demo in New Tab
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        </a>
-      )}
+    <div className="relative overflow-hidden bg-[radial-gradient(circle_at_top,rgba(245,116,69,0.16),transparent_32%),linear-gradient(180deg,#111111_0%,#090909_100%)]">
+      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.04),transparent_30%,transparent_70%,rgba(245,116,69,0.06))]" />
+      <div className="relative px-6 py-12 sm:px-8 sm:py-14 md:px-12 md:py-16">
+        <div className="mx-auto flex max-w-4xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-2xl text-center md:text-left">
+            <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D6D6D6]">
+              {hasExternalDemo ? 'Demo currently unavailable' : 'Interactive demo coming soon'}
+            </span>
+            <h3 className="mt-5 text-[28px] font-extrabold leading-tight tracking-tight text-[#F5F5F5] sm:text-[34px]">
+              {hasExternalDemo ? 'The live environment is offline right now.' : 'A guided LiveProof experience is on the way.'}
+            </h3>
+            <p className="mt-4 max-w-xl text-[15px] leading-7 text-[#B7B7B7] sm:text-[16px]">
+              {hasExternalDemo
+                ? 'GoVTraceAI is still available as a product layer, and the interactive environment will be back shortly.'
+                : 'We are shaping the public demo to reflect the same production-grade guardrails, speed, and clarity our clients see in live deployments.'}
+            </p>
+          </div>
+
+          {hasExternalDemo ? (
+            <a
+              href={demoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 self-center rounded-xl bg-accent px-6 py-3 text-[14px] font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:bg-[#c44625] active:scale-[0.98] md:self-auto"
+            >
+              Open Demo in New Tab
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </a>
+          ) : null}
+        </div>
+
+        <div className="relative mt-10 grid gap-3 sm:grid-cols-3">
+          {[
+            'Instant SAFE / WARNING / BLOCK decisions',
+            'Policy-aware review tuned for real workflows',
+            'Deployable as an API or embedded control layer',
+          ].map((item) => (
+            <div
+              key={item}
+              className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-center text-[13px] font-medium leading-6 text-[#D2D2D2] backdrop-blur-sm sm:text-left"
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }
@@ -104,7 +136,7 @@ export default function LiveProof() {
           }`} />
           <span className="text-[11px] font-semibold tracking-widest text-[#555] uppercase">
             {iframeState === 'loaded' ? 'GoVTraceAI · live' :
-             iframeState === 'failed' ? 'GoVTraceAI · open externally' :
+             iframeState === 'failed' ? (isDemoAvailable ? 'GoVTraceAI · demo currently unavailable' : 'GoVTraceAI · interactive demo coming soon') :
              'GoVTraceAI · connecting…'}
           </span>
         </motion.div>
