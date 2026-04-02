@@ -185,13 +185,13 @@ export default function Hero() {
 
             {/* CTAs */}
             <motion.div
-              className="flex flex-wrap items-center gap-3"
+              className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4"
               variants={fadeUp} initial="initial" animate="animate"
               transition={{ duration: 0.55, ease, delay: 0.26 }}
             >
               <a
                 href="#live-proof"
-                className="inline-flex items-center gap-2 bg-accent text-white font-semibold text-[14px] px-5 py-3 rounded-xl hover:bg-accent/90 active:scale-[0.98] transition-all shadow-lg shadow-accent/20"
+                className="inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold text-[14px] px-5 py-3 rounded-xl hover:bg-accent/90 active:scale-[0.98] transition-all shadow-lg shadow-accent/20"
               >
                 Try Live Demo
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -199,12 +199,12 @@ export default function Hero() {
                 </svg>
               </a>
               
-<a
-  href="#calendly"
-  className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#f15a29] border border-[#f15a29]/70 px-5 py-3 rounded-xl hover:bg-[#f15a29]/10 hover:border-[#f15a29] transition-all"
->
-  Book a Pilot
-</a>
+              <a
+                href="#calendly"
+                className="inline-flex items-center justify-center gap-2 text-[14px] font-semibold text-[#f15a29] border border-[#f15a29]/70 px-5 py-3 rounded-xl hover:bg-[#f15a29]/10 hover:border-[#f15a29] transition-all"
+              >
+                Book a Pilot
+              </a>
             </motion.div>
           </div>
 

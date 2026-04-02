@@ -1,6 +1,45 @@
 'use client'
 
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
+
+const DEMO_URL = process.env.NEXT_PUBLIC_GOVTRACE_URL
+const isDemoAvailable = Boolean(DEMO_URL)
+
+// Timeout before declaring the iframe as unreachable (ms)
+const LOAD_TIMEOUT = 9000
+
+type IframeState = 'loading' | 'loaded' | 'failed'
+
+type IframeFallbackProps = {
+  demoUrl?: string
+}
+
+function IframeFallback({ demoUrl }: IframeFallbackProps) {
+  return (
+    <div className="flex flex-col items-center justify-center gap-6 py-16 px-8 text-center bg-[#0f0f0f] rounded-2xl">
+      <div>
+        <p className="text-[15px] font-semibold text-[#F5F5F5] mb-1">Live Demo Unavailable</p>
+        <p className="text-[13px] text-[#8A8A8A] mb-5">
+          The interactive demo is temporarily unavailable.
+        </p>
+        {demoUrl && (
+          <a
+            href={demoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-accent text-white font-semibold text-[14px] px-6 py-3 rounded-xl hover:bg-[#c44625] active:scale-[0.98] transition-all shadow-lg shadow-accent/20"
+          >
+            Open Demo in New Tab
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </a>
+        )}
+      </div>
+    </div>
+  )
+}
 
 const traditionalSteps = [
   'Week 1–2: Kickoff, requirements',
@@ -21,6 +60,27 @@ const gobotsSteps = [
 ]
 
 export default function ProofExperience() {
+  const [iframeState, setIframeState] = useState<IframeState>(isDemoAvailable ? 'loading' : 'failed')
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => {
+    if (!isDemoAvailable) return
+
+    timeoutRef.current = setTimeout(() => {
+      setIframeState(s => s === 'loading' ? 'failed' : s)
+    }, LOAD_TIMEOUT)
+    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }
+  }, [])
+
+  function handleLoad() {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setIframeState('loaded')
+  }
+
+  function handleError() {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setIframeState('failed')
+  }
   return (
     <section id="proof" className="py-24 md:py-32">
       <div className="max-w-6xl mx-auto px-6">
@@ -159,14 +219,30 @@ export default function ProofExperience() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+            style={{ minHeight: iframeState === 'failed' ? 'auto' : '480px' }}
           >
-            <iframe
-              src="https://govtrace.gobotsai.com"
-              className="w-full rounded-2xl border border-white/[0.08] bg-[#0f0f0f]"
-              style={{ height: '480px' }}
-              frameBorder="0"
-              title="GoVTraceAI Live Demo"
-            />
+            {iframeState === 'failed' ? (
+              <IframeFallback demoUrl={DEMO_URL || undefined} />
+            ) : (
+              <div className="relative">
+                {/* Loading skeleton */}
+                {iframeState === 'loading' && (
+                  <div className="absolute inset-0 bg-[#0f0f0f] flex items-center justify-center gap-3 z-10 rounded-2xl">
+                    <span className="w-1.5 h-1.5 rounded-full bg-accent animate-live-dot" />
+                    <span className="text-[13px] text-[#555] font-mono">Connecting to demo…</span>
+                  </div>
+                )}
+                <iframe
+                  src={DEMO_URL}
+                  className="w-full rounded-2xl border border-white/[0.08] bg-[#0f0f0f]"
+                  style={{ height: '480px' }}
+                  frameBorder="0"
+                  title="GoVTraceAI Live Demo"
+                  onLoad={handleLoad}
+                  onError={handleError}
+                />
+              </div>
+            )}
           </motion.div>
           <p className="text-[#444] text-xs mt-4 text-center">
             GoVTraceAI — AI safety layer by Gobots

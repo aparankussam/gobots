@@ -3,75 +3,53 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 
-const DEMO_URL = 'https://govtrace.gobotsai.com'
+const DEMO_URL = process.env.NEXT_PUBLIC_GOVTRACE_URL
+const isDemoAvailable = Boolean(DEMO_URL)
 // Timeout before declaring the iframe as unreachable (ms)
 const LOAD_TIMEOUT = 9000
 
 type IframeState = 'loading' | 'loaded' | 'failed'
 
-function IframeFallback() {
+type IframeFallbackProps = {
+  demoUrl?: string
+}
+
+function IframeFallback({ demoUrl }: IframeFallbackProps) {
   return (
     <div className="flex flex-col items-center justify-center gap-6 py-16 px-8 text-center bg-[#0A0A0A]">
-      {/* Terminal-style header */}
-      <div className="w-full max-w-md rounded-xl border border-white/[0.07] bg-[#080808] overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2.5 bg-[#0C0C0C] border-b border-white/[0.05]">
-          <div className="flex gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#3a3a3a]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#3a3a3a]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#3a3a3a]" />
-          </div>
-          <span className="text-[10px] text-[#444] font-mono tracking-wider">GoVTraceAI</span>
-          <span className="text-[10px] text-[#555] font-mono">v2.1.0</span>
-        </div>
-        <div className="px-5 py-5 font-mono text-[12px] space-y-2">
-          {[
-            { tag: 'INPUT',  msg: 'My SSN is 123-45-6789',          status: 'received',  sc: '#666' },
-            { tag: 'GOVERN', msg: 'SSN pattern detected',           status: 'HIGH',      sc: '#ef4444' },
-            { tag: 'GOVERN', msg: 'Prompt injection attempt',       status: 'HIGH',      sc: '#ef4444' },
-            { tag: 'OUTPUT', msg: 'Verdict: BLOCK',                 status: '⛔ BLOCK',  sc: '#ef4444' },
-          ].map((l, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <span className="text-[9px] font-bold tracking-widest w-[52px] shrink-0 text-[#D4532A] uppercase">{l.tag}</span>
-              <span className="text-[#777] flex-1 truncate">{l.msg}</span>
-              <span className="shrink-0 font-semibold" style={{ color: l.sc }}>{l.status}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <p className="text-[15px] font-semibold text-[#F5F5F5] mb-1">Live Demo</p>
-        <p className="text-[13px] text-[#8A8A8A] mb-5">
-          The interactive demo runs at govtrace.gobotsai.com
-        </p>
+      <p className="text-[18px] font-bold text-[#F5F5F5]">Live demo unavailable</p>
+      <p className="text-[14px] text-[#8A8A8A] max-w-md">
+        The interactive demo is temporarily unavailable. Please try again later.
+      </p>
+      {demoUrl && (
         <a
-          href={DEMO_URL}
+          href={demoUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 bg-accent text-white font-semibold text-[14px] px-6 py-3 rounded-xl hover:bg-[#c44625] active:scale-[0.98] transition-all shadow-lg shadow-accent/20"
         >
-          Open Full Demo
+          Open Demo in New Tab
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </a>
-      </div>
+      )}
     </div>
   )
 }
 
 export default function LiveProof() {
-  const [iframeState, setIframeState] = useState<IframeState>('loading')
+  const [iframeState, setIframeState] = useState<IframeState>(isDemoAvailable ? 'loading' : 'failed')
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
-    // If iframe hasn't reported load after LOAD_TIMEOUT, fall back
+    if (!isDemoAvailable) return
+
     timeoutRef.current = setTimeout(() => {
       setIframeState(s => s === 'loading' ? 'failed' : s)
     }, LOAD_TIMEOUT)
     return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }
   }, [])
-
   function handleLoad() {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     setIframeState('loaded')
@@ -117,7 +95,7 @@ export default function LiveProof() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.45, delay: 0.1 }}
-          className="flex items-center gap-2 mb-3 justify-center"
+          className="flex items-center gap-2 mb-4 justify-center"
         >
           <span className={`w-1.5 h-1.5 rounded-full ${
             iframeState === 'loaded'  ? 'bg-[#22C55E] animate-live-dot' :
@@ -141,18 +119,18 @@ export default function LiveProof() {
           style={{ minHeight: iframeState === 'failed' ? 'auto' : '640px' }}
         >
           {iframeState === 'failed' ? (
-            <IframeFallback />
+            <IframeFallback demoUrl={DEMO_URL || undefined} />
           ) : (
             <div className="relative" style={{ height: '640px' }}>
               {/* Loading skeleton */}
               {iframeState === 'loading' && (
                 <div className="absolute inset-0 bg-[#0A0A0A] flex items-center justify-center gap-3 z-10">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent animate-live-dot" />
-                  <span className="text-[13px] text-[#555] font-mono">Connecting to govtrace.gobotsai.com…</span>
+                  <span className="text-[13px] text-[#555] font-mono">Connecting to demo…</span>
                 </div>
               )}
               <iframe
-                src={DEMO_URL}
+                src={DEMO_URL || undefined}
                 title="GoVTraceAI — Live Demo"
                 className="w-full h-full"
                 style={{ border: 'none', background: '#080808' }}
@@ -165,7 +143,7 @@ export default function LiveProof() {
         </motion.div>
 
         <p className="text-center text-[13px] text-[#8A8A8A] mt-5">
-          GoVTraceAI · govtrace.gobotsai.com · Available as API or embedded layer
+          GoVTraceAI · Available as API or embedded layer
         </p>
       </div>
     </section>
