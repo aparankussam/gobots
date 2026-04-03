@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const LOGS = [
   { tag: 'INPUT',   msg: 'invoice_q3_final.pdf',          status: 'received',     sc: '#9CA3AF' },
@@ -199,12 +200,12 @@ export default function Hero() {
                 </svg>
               </a>
               
-              <a
-                href="#calendly"
+              <Link
+                href="/book"
                 className="inline-flex items-center justify-center gap-2 text-[14px] font-semibold text-[#f15a29] border border-[#f15a29]/70 px-5 py-3 rounded-xl hover:bg-[#f15a29]/10 hover:border-[#f15a29] transition-all"
               >
-                Book a Pilot
-              </a>
+                Book Strategy Session
+              </Link>
             </motion.div>
           </div>
 

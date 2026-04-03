@@ -1,4 +1,5 @@
 import Image from 'next/image'
+import Link from 'next/link'
 
 export default function Footer() {
   return (
@@ -20,13 +21,26 @@ export default function Footer() {
         <div className="flex items-center gap-6">
           {[
             { label: 'GoVTraceAI', href: '#live-proof' },
-            { label: 'Pilot',     href: '#calendly' },
+            { label: 'Strategy Session', href: '/book' },
             { label: 'Contact',   href: 'mailto:pilot@gobotsai.com' },
           ].map((l) => (
-            <a key={l.label} href={l.href}
-              className="text-[13px] text-[#9CA3AF] hover:text-[#CFCFCF] transition-colors font-medium">
-              {l.label}
-            </a>
+            l.href.startsWith('mailto:') ? (
+              <a
+                key={l.label}
+                href={l.href}
+                className="text-[13px] text-[#9CA3AF] hover:text-[#CFCFCF] transition-colors font-medium"
+              >
+                {l.label}
+              </a>
+            ) : (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="text-[13px] text-[#9CA3AF] hover:text-[#CFCFCF] transition-colors font-medium"
+              >
+                {l.label}
+              </Link>
+            )
           ))}
         </div>
         <p className="text-[12px] text-[#6B7280]">

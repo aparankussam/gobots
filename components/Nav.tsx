@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 
 const GOVTRACE_DEMO_URL = 'https://govtrace-ai.vercel.app'
 
@@ -28,7 +29,7 @@ export default function Nav() {
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
   {/* Logo */}
   <div className="flex items-center gap-4">
-    <a href="/" aria-label="Gobots home" className="flex items-center">
+    <Link href="/" aria-label="Gobots home" className="flex items-center">
       <Image
         src="/gobots-logo.png"
         alt="Gobots"
@@ -38,7 +39,7 @@ export default function Nav() {
         className="h-16 w-auto object-contain"
         style={{ filter: 'brightness(1.08) contrast(1.04)' }}
       />
-    </a>
+    </Link>
     <span className="text-[#D1D5DB] text-[11px] tracking-[0.18em] font-medium uppercase hidden sm:inline select-none ml-2">
       AI Execution Co.
     </span>
@@ -54,12 +55,12 @@ export default function Nav() {
           >
             Try GoVTraceAI
           </a>
-          <a
-            href="#calendly"
+          <Link
+            href="/book"
             className="text-sm font-medium bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors"
           >
-            Book a Pilot
-          </a>
+            Book Strategy Session
+          </Link>
         </div>
 
         {/* Mobile Hamburger */}
@@ -98,13 +99,13 @@ export default function Nav() {
           >
             Try GoVTraceAI
           </a>
-          <a
-            href="#calendly"
+          <Link
+            href="/book"
             onClick={() => setMenuOpen(false)}
             className="text-sm font-medium bg-accent text-white px-4 py-3 rounded-lg hover:bg-accent/90 transition-colors text-center"
           >
-            Book a Pilot
-          </a>
+            Book Strategy Session
+          </Link>
         </div>
       )}
     </header>
