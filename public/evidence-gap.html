@@ -49,8 +49,10 @@
   .panel{background:#0A0A0A;border:1px solid #1F2937;border-radius:14px;}
   .verified-dot{animation:pulse 2s ease-in-out infinite;}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
-  @keyframes fadeLine{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
-  .fade-line{animation:fadeLine .4s ease-out both;}
+  .fade-line{opacity:0;transform:translateY(4px);transition:opacity .35s ease-out,transform .35s ease-out;}
+  .fade-line.is-visible{opacity:1;transform:translateY(0);}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  .cursor-blink{animation:blink 1s steps(1) infinite;}
   .logo-img{filter:brightness(1.08) contrast(1.04);}
   pre{font-family:'JetBrains Mono',monospace;}
 </style>
@@ -115,43 +117,43 @@
         </div>
       </div>
       <div class="px-5 py-5 font-mono text-[12.5px] space-y-2.5 min-h-[280px]">
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:.05s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">01</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Input</span>
           <span class="text-ink flex-1 truncate">ambient_scribe.session_start</span>
           <span class="shrink-0 font-semibold text-ink-dim">captured</span>
         </div>
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:.2s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">02</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Context</span>
           <span class="text-ink flex-1 truncate">Jurisdiction resolved · US-CA</span>
           <span class="shrink-0 font-semibold text-ink-dim">all-party</span>
         </div>
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:.4s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">03</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-brand">Govern</span>
           <span class="text-ink flex-1 truncate">CIPA §632.7 consent artifact</span>
           <span class="shrink-0 font-semibold text-danger">MISSING</span>
         </div>
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:.6s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">04</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-brand">Govern</span>
           <span class="text-ink flex-1 truncate">CMIA §56.101 authorization</span>
           <span class="shrink-0 font-semibold text-danger">MISSING</span>
         </div>
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:.8s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">05</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-brand">Decide</span>
           <span class="text-ink flex-1 truncate">Verdict rendered</span>
           <span class="shrink-0 font-semibold text-danger">BLOCK</span>
         </div>
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:1s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">06</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Sign</span>
           <span class="text-ink flex-1 truncate">Ed25519 · chain committed</span>
           <span class="shrink-0 font-semibold text-safe">SAFE ✓</span>
         </div>
-        <div class="flex items-center gap-3 leading-none fade-line" style="animation-delay:1.2s">
+        <div class="flex items-center gap-3 leading-none fade-line">
           <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">07</span>
           <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Output</span>
           <span class="text-ink flex-1 truncate">DoCR · docr_2d7f…6f03</span>
@@ -444,16 +446,25 @@ const fixture = {
   }
 };
 
-/* Loop terminal lines so the page doesn't feel frozen after first paint */
+/* Sequential reveal of terminal lines, mirrors the landing-page execution engine. */
 (function loopTerminalLines() {
-  const lines = document.querySelectorAll('.fade-line');
+  const lines = Array.from(document.querySelectorAll('.fade-line'));
   if (!lines.length) return;
-  function replay() {
-    lines.forEach((line) => { line.style.animation = 'none'; });
-    void document.body.offsetWidth;
-    lines.forEach((line) => { line.style.animation = ''; });
+  let timer = null;
+
+  function step(i) {
+    if (i < lines.length) {
+      lines[i].classList.add('is-visible');
+      timer = setTimeout(() => step(i + 1), 480 + Math.random() * 220);
+    } else {
+      timer = setTimeout(() => {
+        lines.forEach((line) => line.classList.remove('is-visible'));
+        timer = setTimeout(() => step(0), 420);
+      }, 3400);
+    }
   }
-  setInterval(replay, 7000);
+
+  timer = setTimeout(() => step(0), 600);
 })();
 
 btn.addEventListener('click', () => {

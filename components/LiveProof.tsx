@@ -180,7 +180,7 @@ export default function LiveProof() {
 
         <p className="text-center mt-3">
           <a
-            href="/evidence-gap.html"
+            href="/evidence-gap"
             className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent hover:text-accent/80 transition-colors"
           >
             See the GoVTraceAI evidence artifact
