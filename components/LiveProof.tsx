@@ -177,6 +177,16 @@ export default function LiveProof() {
         <p className="text-center text-[13px] text-[#8A8A8A] mt-5">
           GoVTraceAI · Available as API or embedded layer
         </p>
+
+        <p className="text-center mt-3">
+          <a
+            href="/evidence-gap.html"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent hover:text-accent/80 transition-colors"
+          >
+            See the GoVTraceAI evidence artifact
+            <span aria-hidden="true">→</span>
+          </a>
+        </p>
       </div>
     </section>
   )
