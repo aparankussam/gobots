@@ -48,7 +48,7 @@ const CARDS: AgentCard[] = [
 ]
 
 const PILLARS = [
-  { num: '01', title: 'AI Agents',          body: 'Autonomous systems that execute real tasks — document processing, decision routing, content review — without human bottlenecks.' },
+  { num: '01', title: 'AI Agents',          body: 'Autonomous systems that execute real tasks: document processing, decision routing, content review. No human bottlenecks.' },
   { num: '02', title: 'Execution Systems',  body: 'End-to-end AI workflows that connect to your data, tools, and logic. Deployed in your environment. Runs like infrastructure.' },
   { num: '03', title: 'Governance Layer',   body: 'Safety and auditability built in from day one. PII detection, injection guard, audit trails. Not bolted on. Not an afterthought.' },
 ]

@@ -42,7 +42,7 @@ export default function BookPage() {
             <div className="rounded-2xl border border-white/[0.08] overflow-hidden shadow-2xl shadow-black/50 bg-[#0D0D0D]">
               <iframe
                 src={CALENDLY_URL}
-                title="Book Strategy Session — Gobots"
+                title="Book Strategy Session · Gobots"
                 className="w-full"
                 style={{ height: '760px', border: 'none' }}
                 loading="lazy"

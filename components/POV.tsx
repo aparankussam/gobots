@@ -45,7 +45,7 @@ export default function POV() {
             Now focused on execution, not experimentation.
           </p>
           <p className="text-[15px] text-[#888] leading-relaxed max-w-2xl">
-            A decade inside enterprise AI programmes — watching strong ideas get buried in governance theatre,
+            A decade inside enterprise AI programmes. Watched strong ideas get buried in governance theatre,
             discovery cycles, and slide decks that never shipped.
             Gobots exists because execution, not experimentation, creates value.
             We don&rsquo;t consult. We build. We deploy. We govern. Week 1.

@@ -8,7 +8,7 @@ import Link from 'next/link'
 const LOGS = [
   { tag: 'INPUT',   msg: 'invoice_q3_final.pdf',          status: 'received',     sc: '#9CA3AF' },
   { tag: 'PARSE',   msg: 'Extracting structured fields',   status: '47 found',     sc: '#9CA3AF' },
-  { tag: 'GOVERN',  msg: 'PII scan — SSN, email',          status: 'SAFE ✓',       sc: '#4ADE80' },
+  { tag: 'GOVERN',  msg: 'PII scan: SSN, email',          status: 'SAFE ✓',       sc: '#4ADE80' },
   { tag: 'GOVERN',  msg: 'Prompt injection check',         status: 'SAFE ✓',       sc: '#4ADE80' },
   { tag: 'EXECUTE', msg: 'POST /api/v2/erp/invoices',      status: '200 OK',       sc: '#9CA3AF' },
   { tag: 'AUDIT',   msg: 'Compliance trail committed',     status: 'logged',       sc: '#9CA3AF' },
@@ -177,10 +177,10 @@ export default function Hero() {
             >
               <p className="text-[13px] text-[#A3A3A3] leading-relaxed">
                 <span className="text-[#F5F5F5] font-medium">Anand Parankussam</span>
-                {' '}· ex-IBM, UWM, Adient
+                {' '}· Enterprise AI &amp; Automation Leader (ex-IBM, UWM, Adient)
               </p>
-              <p className="text-[12px] text-[#9CA3AF] mt-1">
-                Systems deployed across Apple, UBS, BCBS, Nationwide, Qantas
+              <p className="text-[12px] text-[#9CA3AF] mt-1 leading-relaxed">
+                Governance systems deployed across fintech, mortgage, automotive, manufacturing, banking, insurance, and other regulated sectors.
               </p>
             </motion.div>
 
