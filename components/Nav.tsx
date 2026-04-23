@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const GOVTRACE_DEMO_URL = '/govtrace'
+const GOVTRACE_DEMO_URL = '/demo'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -47,14 +47,12 @@ export default function Nav() {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
-          <a
+          <Link
             href={GOVTRACE_DEMO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
             className="text-sm font-medium text-accent border border-accent/40 px-4 py-2 rounded-lg hover:bg-accent/10 transition-colors"
           >
-            Try GoVTraceAI
-          </a>
+            Try the Live Demo
+          </Link>
           <Link
             href="/walkthrough"
             className="text-sm font-medium bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors"
@@ -90,15 +88,13 @@ export default function Nav() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#080808]/95 backdrop-blur-md border-t border-white/[0.06] px-6 py-6 flex flex-col gap-4">
-          <a
+          <Link
             href={GOVTRACE_DEMO_URL}
-            target="_blank"
-            rel="noopener noreferrer"
             onClick={() => setMenuOpen(false)}
             className="text-sm font-medium text-accent border border-accent/40 px-4 py-3 rounded-lg hover:bg-accent/10 transition-colors text-center"
           >
-            Try GoVTraceAI
-          </a>
+            Try the Live Demo
+          </Link>
           <Link
             href="/walkthrough"
             onClick={() => setMenuOpen(false)}
