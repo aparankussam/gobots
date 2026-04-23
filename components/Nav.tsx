@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-const GOVTRACE_DEMO_URL = 'https://govtrace-ai.vercel.app'
+const GOVTRACE_DEMO_URL = '/govtrace'
 
 export default function Nav() {
   const [scrolled, setScrolled] = useState(false)
@@ -56,10 +56,10 @@ export default function Nav() {
             Try GoVTraceAI
           </a>
           <Link
-            href="/book"
+            href="/walkthrough"
             className="text-sm font-medium bg-accent text-white px-4 py-2 rounded-lg hover:bg-accent/90 transition-colors"
           >
-            Book Strategy Session
+            Request a Walkthrough
           </Link>
         </div>
 
@@ -100,11 +100,11 @@ export default function Nav() {
             Try GoVTraceAI
           </a>
           <Link
-            href="/book"
+            href="/walkthrough"
             onClick={() => setMenuOpen(false)}
             className="text-sm font-medium bg-accent text-white px-4 py-3 rounded-lg hover:bg-accent/90 transition-colors text-center"
           >
-            Book Strategy Session
+            Request a Walkthrough
           </Link>
         </div>
       )}

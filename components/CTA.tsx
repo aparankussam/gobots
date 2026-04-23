@@ -16,7 +16,7 @@ export default function CTA() {
         >
           <div className="w-8 h-[2px] bg-accent mb-2 mx-auto" />
           <p className="text-accent text-xs font-semibold tracking-[0.22em] uppercase mb-3">
-            Book Strategy Session
+            Scenario Walkthrough
           </p>
           <h2 className="text-[38px] md:text-[52px] font-extrabold text-[#F5F5F5] leading-[1.08] tracking-tight mb-5">
             Map the first system we should deploy.
@@ -41,10 +41,10 @@ export default function CTA() {
           </p>
 
           <Link
-            href="/book"
+            href="/walkthrough"
             className="inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold py-3.5 px-6 rounded-xl hover:bg-[#c44625] active:scale-[0.99] transition-all text-[15px] tracking-wide shadow-lg shadow-accent/20 focus:outline-none focus:ring-2 focus:ring-accent/40"
           >
-            Book Strategy Session
+            Request a Walkthrough
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path
                 d="M2 7h10M7 2l5 5-5 5"
@@ -57,13 +57,8 @@ export default function CTA() {
           </Link>
 
           <p className="text-center text-[13px] text-[#8A8A8A] mt-5">
-            Prefer a call?{' '}
-            <a
-              href="mailto:pilot@gobotsai.com"
-              className="text-accent hover:text-accent/80 transition-colors font-medium underline-offset-2 hover:underline"
-            >
-              pilot@gobotsai.com
-            </a>
+            Four fields. Founder reads it. Reply-to is{' '}
+            <span className="text-[#CFCFCF] font-mono">anand@gobotsai.com</span>.
           </p>
         </motion.div>
       </div>

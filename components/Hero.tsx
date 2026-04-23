@@ -201,10 +201,10 @@ export default function Hero() {
               </a>
               
               <Link
-                href="/book"
+                href="/walkthrough"
                 className="inline-flex items-center justify-center gap-2 text-[14px] font-semibold text-[#f15a29] border border-[#f15a29]/70 px-5 py-3 rounded-xl hover:bg-[#f15a29]/10 hover:border-[#f15a29] transition-all"
               >
-                Book Strategy Session
+                Request a Walkthrough
               </Link>
             </motion.div>
           </div>
