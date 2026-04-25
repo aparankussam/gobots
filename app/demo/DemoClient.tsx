@@ -614,6 +614,20 @@ function Receipt({
         <Field k="signed_at" v={receipt.signed_at ?? result.timestamp} />
         <Field k="signature_algo" v={integrity.signature_algo ?? receipt.signature_algo ?? 'Ed25519'} />
       </div>
+      <p className="text-[11px] text-white/45 mt-5 leading-relaxed">
+        Notarization-grade. Anyone with the published public key can re-verify
+        this receipt offline.{' '}
+        <Link href="/verify" className="text-accent underline underline-offset-4">
+          Try the web verifier
+        </Link>{' '}
+        or run{' '}
+        <span className="font-mono text-white/65">npm i -g @gobotsai/govtrace</span>
+        .{' '}
+        <Link href="/spec" className="text-accent underline underline-offset-4">
+          Read the spec
+        </Link>
+        .
+      </p>
     </motion.div>
   )
 }

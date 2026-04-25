@@ -96,10 +96,10 @@ export default function VerifyClient() {
             INDEPENDENT VERIFICATION
           </p>
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.05] mb-4">
-            Verify a GoVTraceAI receipt.
+            Verify a notarized AI receipt.
           </h1>
           <p className="text-white/70 text-lg max-w-2xl">
-            Paste any signed receipt. The verifier checks the Ed25519 signature
+            Paste any GoVTrace Receipt v1. The verifier checks the Ed25519 signature
             against the public key at{' '}
             <Link
               href="https://govtrace-api.vercel.app/.well-known/govtrace-pubkey.json"
@@ -109,7 +109,12 @@ export default function VerifyClient() {
             >
               /.well-known/govtrace-pubkey.json
             </Link>
-            . Stateless. No DoCR required. No login.
+            . Stateless. No DoCR required. No login. Same result as{' '}
+            <Code>npm i -g @gobotsai/govtrace</Code> on the command line.{' '}
+            <Link href="/spec" className="text-accent underline underline-offset-4">
+              Read the spec
+            </Link>
+            .
           </p>
         </div>
 
@@ -239,5 +244,13 @@ function Field({ label, value }: { label: string; value: string }) {
       </span>
       <code className="font-mono text-xs text-white/90 break-all">{value}</code>
     </div>
+  )
+}
+
+function Code({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="font-mono text-[0.85em] bg-white/5 border border-white/10 rounded px-1.5 py-0.5 text-white/90">
+      {children}
+    </code>
   )
 }

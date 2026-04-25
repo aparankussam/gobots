@@ -48,6 +48,18 @@ export default function Nav() {
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
           <Link
+            href="/spec"
+            className="text-sm font-medium text-white/70 hover:text-white px-2 py-2 transition-colors"
+          >
+            Spec
+          </Link>
+          <Link
+            href="/verify"
+            className="text-sm font-medium text-white/70 hover:text-white px-2 py-2 transition-colors"
+          >
+            Verify
+          </Link>
+          <Link
             href={GOVTRACE_DEMO_URL}
             className="text-sm font-medium text-accent border border-accent/40 px-4 py-2 rounded-lg hover:bg-accent/10 transition-colors"
           >
@@ -88,6 +100,20 @@ export default function Nav() {
       {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-[#080808]/95 backdrop-blur-md border-t border-white/[0.06] px-6 py-6 flex flex-col gap-4">
+          <Link
+            href="/spec"
+            onClick={() => setMenuOpen(false)}
+            className="text-sm font-medium text-white/80 hover:text-white text-center py-2"
+          >
+            Spec
+          </Link>
+          <Link
+            href="/verify"
+            onClick={() => setMenuOpen(false)}
+            className="text-sm font-medium text-white/80 hover:text-white text-center py-2"
+          >
+            Verify
+          </Link>
           <Link
             href={GOVTRACE_DEMO_URL}
             onClick={() => setMenuOpen(false)}
