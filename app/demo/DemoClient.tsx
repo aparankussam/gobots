@@ -1,10 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
-import { motion, AnimatePresence } from 'framer-motion'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
+import Stamp from '@/components/doc/Stamp'
+import Seal from '@/components/doc/Seal'
+import Guilloche from '@/components/doc/Guilloche'
+import { Arrow, Check, Cross } from '@/components/doc/icons'
 
 type ScenarioId = 'healthcare' | 'fintech' | 'legal'
 type RiskMode = 'risky' | 'safe'
@@ -89,6 +92,8 @@ type EngineResponse = {
     category?: string
     severity?: string
     message?: string
+    signal?: string
+    rule_label?: string
   }>
   blocking_classes?: Record<string, number>
   duty_of_care_record?: {
@@ -177,479 +182,477 @@ export default function DemoClient() {
     }
   }
 
+  const busy = evalState.kind === 'evaluating'
+  const runtimeStatus =
+    evalState.kind === 'done'
+      ? 'Record issued'
+      : evalState.kind === 'evaluating'
+        ? 'Intercepting'
+        : evalState.kind === 'error'
+          ? 'Engine error'
+          : 'Standing by'
+
   return (
-    <main className="bg-[#050505] min-h-screen">
+    <main className="min-h-screen bg-paper text-ink">
       <Nav />
-      <section className="pt-32 pb-20 md:pb-24">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-3xl mx-auto text-center mb-10">
-            <div className="w-8 h-[2px] bg-accent mb-2 mx-auto" />
-            <p className="text-accent text-xs font-semibold tracking-[0.22em] uppercase mb-3">
-              Live Gatekeeper
+
+      {/* Title */}
+      <section className="pt-16">
+        <div className="wrap grid gap-x-12 gap-y-6 pb-12 pt-14 md:pt-20 lg:grid-cols-12 lg:pb-16">
+          <h1 className="display text-[clamp(2.6rem,6.4vw,4.75rem)] lg:col-span-7">
+            Watch AI try. Watch GoVTraceAI catch it<span className="text-seal">.</span>
+          </h1>
+          <p className="max-w-[34rem] text-[18px] leading-[1.55] text-ink-2 lg:col-span-4 lg:col-start-9 lg:self-end">
+            Pick a sector. Pick a scenario. Press the button an employee would press. The live
+            engine issues the signed Duty-of-Care Record in real time. It is signed as a GoVTrace Receipt, so you can verify it.
+          </p>
+        </div>
+      </section>
+
+      {/* Workbench */}
+      <section aria-label="Live gatekeeper" className="border-t border-ink/80 pb-20 md:pb-28">
+        <div className="wrap grid gap-x-12 gap-y-14 pt-10 lg:grid-cols-12 lg:pt-12">
+          {/* Input side */}
+          <div className="min-w-0 lg:col-span-6">
+            <p id="demo-app-label" className="label text-ink-2">
+              Application
             </p>
-            <h1 className="text-[36px] md:text-[52px] font-extrabold text-[#F5F5F5] leading-[1.08] tracking-tight mb-5">
-              Watch AI try. Watch GoVTraceAI catch it.
-            </h1>
-            <p className="text-[16px] text-[#CFCFCF] max-w-xl mx-auto leading-relaxed">
-              Pick a sector. Pick a scenario. Press the button an employee would press.
-              The signed Duty-of-Care Record is generated in real time by the live engine.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 justify-center mb-8">
-            {(Object.keys(SCENARIOS) as ScenarioId[]).map((id) => {
-              const isActive = scenarioId === id
-              const s = SCENARIOS[id]
-              return (
-                <button
-                  key={id}
-                  onClick={() => {
-                    setScenarioId(id)
-                    setRisk('risky')
-                    reset()
-                  }}
-                  className={`px-4 py-2 rounded-lg text-[13px] font-semibold tracking-wide transition-colors border ${
-                    isActive
-                      ? 'bg-accent text-white border-accent'
-                      : 'bg-transparent text-[#CFCFCF] border-white/10 hover:border-white/30'
-                  }`}
-                >
-                  {s.appName}
-                  <span
-                    className={`ml-2 text-[10px] tracking-[0.18em] uppercase ${
-                      isActive ? 'text-white/70' : 'text-[#6B7280]'
-                    }`}
-                  >
-                    {s.profile}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-
-          <div className="grid lg:grid-cols-[1.05fr_1fr] gap-6">
-            <div className="rounded-2xl border border-white/[0.08] bg-[#0D0D0D] overflow-hidden">
-              <div className="flex items-center gap-2 px-5 py-3 border-b border-white/[0.06] bg-black/40">
-                <span className="w-2 h-2 rounded-full bg-[#444]" />
-                <span className="w-2 h-2 rounded-full bg-[#444]" />
-                <span className="w-2 h-2 rounded-full bg-[#444]" />
-                <p className="ml-3 text-[11px] text-[#6B7280] font-mono">
-                  {scenario.appDomain}
-                </p>
-              </div>
-              <div className="p-6">
-                <p className="text-[11px] text-[#8A8A8A] tracking-[0.18em] uppercase font-semibold mb-1">
-                  {scenario.appName}
-                </p>
-                <h2 className="text-[18px] font-bold text-[#F5F5F5] mb-5">
-                  {scenario.appTagline}
-                </h2>
-
-                <div className="inline-flex rounded-lg border border-white/10 bg-black/40 p-1 mb-5">
-                  <button
-                    onClick={() => {
-                      setRisk('risky')
-                      reset()
-                    }}
-                    className={`px-3 py-1.5 text-[12px] font-medium rounded-md transition-colors ${
-                      risk === 'risky'
-                        ? 'bg-white/10 text-white'
-                        : 'text-[#9CA3AF] hover:text-[#CFCFCF]'
-                    }`}
-                  >
-                    {scenario.risky.label}
-                  </button>
-                  <button
-                    onClick={() => {
-                      setRisk('safe')
-                      reset()
-                    }}
-                    className={`px-3 py-1.5 text-[12px] font-medium rounded-md transition-colors ${
-                      risk === 'safe'
-                        ? 'bg-white/10 text-white'
-                        : 'text-[#9CA3AF] hover:text-[#CFCFCF]'
-                    }`}
-                  >
-                    {scenario.safe.label}
-                  </button>
-                </div>
-
-                <p className="text-[12px] text-[#6B7280] mb-2 leading-relaxed">
-                  {scenario.context}
-                </p>
-
-                <div className="rounded-lg bg-black border border-white/10 p-4 text-[13px] text-[#CFCFCF] font-mono leading-relaxed mb-5 min-h-[120px] whitespace-pre-wrap">
-                  {text}
-                </div>
-
-                <button
-                  onClick={handleSend}
-                  disabled={evalState.kind === 'evaluating'}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold py-3 rounded-xl hover:bg-[#c44625] active:scale-[0.99] transition-all text-[14px] shadow-lg shadow-accent/20 disabled:opacity-60 disabled:cursor-wait"
-                >
-                  {evalState.kind === 'evaluating'
-                    ? 'Intercepting…'
-                    : scenario.ctaLabel}
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 14 14"
-                    fill="none"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M2 7h10M7 2l5 5-5 5"
-                      stroke="currentColor"
-                      strokeWidth="1.8"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </button>
-
-                <AnimatePresence>
-                  {evalState.kind === 'done' && (
-                    <Banner result={evalState.result} />
-                  )}
-                  {evalState.kind === 'error' && (
-                    <motion.div
-                      key="err"
-                      initial={{ opacity: 0, y: 6 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="mt-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-[13px] text-red-200"
+            <ul aria-labelledby="demo-app-label" className="mt-3 border-t border-ink/80">
+              {(Object.keys(SCENARIOS) as ScenarioId[]).map((id) => {
+                const isActive = scenarioId === id
+                const s = SCENARIOS[id]
+                return (
+                  <li key={id} className="border-b border-rule">
+                    <button
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => {
+                        setScenarioId(id)
+                        setRisk('risky')
+                        reset()
+                      }}
+                      className={`grid w-full grid-cols-[1.25rem_minmax(0,1fr)_auto] items-baseline gap-x-3 px-3 py-3.5 text-left transition-colors ${
+                        isActive ? 'bg-paper-3' : 'hover:bg-paper-2'
+                      }`}
                     >
-                      Engine error: {evalState.message}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            </div>
+                      <RadioMark on={isActive} />
+                      <span className="min-w-0">
+                        <span className="block text-[16px] font-semibold leading-snug">
+                          {s.appName}
+                        </span>
+                        <span className="block text-[14px] leading-snug text-ink-3">
+                          {s.appTagline}
+                        </span>
+                      </span>
+                      <span className="text-[13px] text-ink-3">{s.profile}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
 
-            <div className="rounded-2xl border border-white/[0.08] bg-[#070707] overflow-hidden">
-              <div className="flex items-center gap-2 px-5 py-3 border-b border-white/[0.06] bg-black/40">
-                <span
-                  className={`w-1.5 h-1.5 rounded-full ${
-                    evalState.kind === 'done'
-                      ? 'bg-[#22C55E]'
-                      : evalState.kind === 'evaluating'
-                        ? 'bg-accent animate-live-dot'
-                        : evalState.kind === 'error'
-                          ? 'bg-amber-400'
-                          : 'bg-[#444]'
-                  }`}
-                />
-                <p className="text-[11px] text-[#9CA3AF] font-semibold tracking-[0.18em] uppercase">
-                  GoVTraceAI Runtime
-                </p>
-                <p className="ml-auto text-[10px] text-[#555] font-mono">
-                  profile: {scenario.profile}
-                </p>
+            <p id="demo-draft-label" className="label mt-9 text-ink-2">
+              Draft
+            </p>
+            <ul aria-labelledby="demo-draft-label" className="mt-3 border-t border-ink/80">
+              {(['risky', 'safe'] as RiskMode[]).map((mode) => {
+                const isActive = risk === mode
+                return (
+                  <li key={mode} className="border-b border-rule">
+                    <button
+                      type="button"
+                      aria-pressed={isActive}
+                      onClick={() => {
+                        setRisk(mode)
+                        reset()
+                      }}
+                      className={`grid w-full grid-cols-[1.25rem_minmax(0,1fr)] items-baseline gap-x-3 px-3 py-3 text-left text-[15px] transition-colors ${
+                        isActive ? 'bg-paper-3 font-semibold' : 'text-ink-2 hover:bg-paper-2 hover:text-ink'
+                      }`}
+                    >
+                      <RadioMark on={isActive} />
+                      <span>{scenario[mode].label}</span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+
+            <div className="mt-9">
+              <div className="flex items-baseline justify-between gap-4 border-b border-ink/80 pb-2">
+                <p className="label text-ink-2">Outbound action</p>
+                <p className="truncate font-mono text-[12px] text-ink-3">{scenario.appDomain}</p>
               </div>
-              <div className="p-5 font-mono text-[12px] text-[#CFCFCF] leading-[1.7] min-h-[420px]">
-                <Runtime state={evalState} profile={scenario.profile} />
+              <p className="mt-4 text-[15px] leading-relaxed text-ink-2">{scenario.context}</p>
+              <div className="mt-4 min-h-[8rem] whitespace-pre-wrap break-words rounded-doc border border-ink/30 bg-paper-3 p-4 font-mono text-[13.5px] leading-relaxed text-ink">
+                {text}
               </div>
+
+              <button
+                type="button"
+                onClick={handleSend}
+                disabled={busy}
+                aria-busy={busy}
+                className="btn-ink mt-5 w-full py-3.5 disabled:cursor-wait disabled:opacity-70 disabled:hover:bg-ink"
+              >
+                {busy ? 'Intercepting…' : scenario.ctaLabel}
+                {!busy && <Arrow />}
+              </button>
+
+              {evalState.kind === 'done' && <Banner result={evalState.result} />}
+              {evalState.kind === 'error' && (
+                <p
+                  role="alert"
+                  className="mt-4 flex items-start gap-2.5 border-y border-verdict-block/40 py-3 text-[14px] leading-relaxed text-verdict-block"
+                >
+                  <Cross size={12} className="mt-[5px] shrink-0" />
+                  <span>Engine error: {evalState.message}</span>
+                </p>
+              )}
             </div>
           </div>
 
-          <AnimatePresence>
-            {evalState.kind === 'done' && (
-              <Receipt result={evalState.result} onVerify={handleVerify} />
-            )}
-          </AnimatePresence>
-
-          <div className="mt-14 max-w-3xl mx-auto text-center">
-            <div className="w-8 h-[2px] bg-accent mb-2 mx-auto" />
-            <p className="text-accent text-xs font-semibold tracking-[0.22em] uppercase mb-3">
-              Your scenario, live
-            </p>
-            <h3 className="text-[28px] md:text-[34px] font-extrabold text-[#F5F5F5] leading-tight tracking-tight mb-4">
-              Same engine. Your workflow. Twenty minutes.
-            </h3>
-            <p className="text-[15px] text-[#CFCFCF] mb-6 leading-relaxed">
-              Bring the action your team is afraid to ship. We will run it through the
-              live engine on the call and you will leave with the signed record.
-            </p>
-            <Link
-              href="/walkthrough"
-              className="inline-flex items-center justify-center gap-2 bg-accent text-white font-semibold py-3 px-6 rounded-xl hover:bg-[#c44625] active:scale-[0.99] transition-all text-[14px] shadow-lg shadow-accent/20"
-            >
-              Request a Walkthrough
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 14 14"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M2 7h10M7 2l5 5-5 5"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
+          {/* Runtime / record side */}
+          <div className="min-w-0 lg:col-span-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b border-ink/80 pb-2">
+              <p className="label whitespace-nowrap text-ink-2">GoVTraceAI runtime</p>
+              <p className="text-[13px] text-ink-3">
+                <span className="sr-only">Status: </span>
+                {runtimeStatus}
+                <span aria-hidden="true"> · </span>
+                <span className="font-mono text-[12px]">profile: {scenario.profile}</span>
+              </p>
+            </div>
+            <div aria-live="polite" className="mt-6">
+              {evalState.kind === 'done' ? (
+                <IssuedRecord
+                  result={evalState.result}
+                  profile={scenario.profile}
+                  onVerify={handleVerify}
                 />
-              </svg>
+              ) : (
+                <Runtime state={evalState} profile={scenario.profile} />
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Conversion */}
+      <section className="border-t border-ink/80 py-20 md:py-28">
+        <div className="wrap grid gap-x-12 gap-y-8 lg:grid-cols-12">
+          <h2 className="heading text-[clamp(2.1rem,4.4vw,3.4rem)] lg:col-span-6">
+            Want this on your workflow?
+          </h2>
+          <div className="lg:col-span-5 lg:col-start-8 lg:pt-2">
+            <p className="text-[18px] leading-[1.55] text-ink-2">
+              Bring the action your team is afraid to ship. We will run it through the live engine
+              on the call and you will leave with the signed record.
+            </p>
+            <Link href="/walkthrough" className="btn-ink mt-8 py-3.5">
+              Book a GoVTraceAI briefing
+              <Arrow />
             </Link>
-            <p className="mt-3 text-[12px] text-[#8A8A8A]">
-              Reply-to is{' '}
-              <span className="text-[#CFCFCF] font-mono">anand@gobotsai.com</span>.
-              Founder reads it.
+            <p className="mt-5 border-t border-rule pt-4 text-[14px] text-ink-3">
+              Questions first? Write to{' '}
+              <span className="font-medium text-ink">hello@gobotsai.com</span>.
             </p>
           </div>
         </div>
       </section>
 
-      <AnimatePresence>
-        {verifyState.open && (
-          <VerifyModal
-            state={verifyState}
-            onClose={() => setVerifyState({ open: false })}
-          />
-        )}
-      </AnimatePresence>
+      {verifyState.open && (
+        <VerifyModal state={verifyState} onClose={() => setVerifyState({ open: false })} />
+      )}
 
       <Footer />
     </main>
   )
 }
 
-function Banner({ result }: { result: EngineResponse }) {
-  const code = result.verdict_code ?? 'UNKNOWN'
-  const findingCount = result.findings?.length ?? 0
-  const tone =
-    code === 'STOP'
-      ? {
-          border: 'border-red-500/40',
-          bg: 'bg-red-500/10',
-          text: 'text-red-200',
-          label: 'BLOCKED',
-        }
-      : code === 'NEEDS_REVIEW'
-        ? {
-            border: 'border-amber-500/40',
-            bg: 'bg-amber-500/10',
-            text: 'text-amber-200',
-            label: 'NEEDS REVIEW',
-          }
-        : {
-            border: 'border-emerald-500/40',
-            bg: 'bg-emerald-500/10',
-            text: 'text-emerald-200',
-            label: 'ALLOWED',
-          }
-
+function RadioMark({ on }: { on: boolean }) {
   return (
-    <motion.div
-      key="banner"
-      initial={{ opacity: 0, y: 6 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3 }}
-      className={`mt-4 rounded-lg border ${tone.border} ${tone.bg} px-4 py-3`}
+    <span
+      aria-hidden="true"
+      className={`relative top-[2px] inline-flex h-3.5 w-3.5 items-center justify-center rounded-full border ${
+        on ? 'border-ink' : 'border-ink/40'
+      }`}
     >
-      <p className={`text-[13px] font-bold tracking-wide ${tone.text}`}>
-        {tone.label}
-      </p>
-      <p className="text-[12px] text-[#CFCFCF] mt-1 leading-relaxed">
-        {code === 'SAFE'
-          ? 'Action passed all policy checks. Cleared for delivery.'
-          : `${findingCount} finding${findingCount === 1 ? '' : 's'} flagged before the action reached the recipient.`}
-      </p>
-      {result.reason_line && (
-        <p className="text-[11px] text-[#9CA3AF] mt-2 font-mono leading-relaxed">
-          {result.reason_line}
-        </p>
-      )}
-    </motion.div>
+      {on && <span className="h-[7px] w-[7px] rounded-full bg-ink" />}
+    </span>
   )
 }
 
-function Runtime({
-  state,
-  profile,
-}: {
-  state: EvalState
-  profile: string
-}) {
-  if (state.kind === 'idle') {
-    return (
-      <p className="text-[#555]">
-        <span className="text-accent">$</span> awaiting AI action ({profile} profile
-        loaded)…
+type Tone = 'safe' | 'warn' | 'block'
+
+function verdictTone(code: string): { tone: Tone; label: string; text: string } {
+  if (code === 'STOP') return { tone: 'block', label: 'BLOCKED', text: 'text-verdict-block' }
+  if (code === 'NEEDS_REVIEW')
+    return { tone: 'warn', label: 'NEEDS REVIEW', text: 'text-verdict-warn' }
+  return { tone: 'safe', label: 'ALLOWED', text: 'text-verdict-safe' }
+}
+
+function verdictSummary(code: string, findingCount: number) {
+  return code === 'SAFE'
+    ? 'Action passed all policy checks. Cleared for delivery.'
+    : `${findingCount} finding${findingCount === 1 ? '' : 's'} flagged before the action reached the recipient.`
+}
+
+function Banner({ result }: { result: EngineResponse }) {
+  const code = result.verdict_code ?? 'UNKNOWN'
+  const findingCount = result.findings?.length ?? 0
+  const v = verdictTone(code)
+
+  return (
+    <div className="mt-4 border-y border-rule py-3">
+      <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <span className={`label text-[13px] ${v.text}`}>{v.label}</span>
+        <span className="text-[14px] leading-relaxed text-ink-2">
+          {verdictSummary(code, findingCount)}
+        </span>
       </p>
-    )
-  }
+    </div>
+  )
+}
+
+function Runtime({ state, profile }: { state: EvalState; profile: string }) {
   if (state.kind === 'evaluating') {
     return <RuntimeStream profile={profile} />
   }
-  if (state.kind === 'error') {
-    return (
-      <p className="text-amber-400">
-        <span className="text-accent">$</span> engine returned an error. See message
-        above.
-      </p>
-    )
-  }
-  const r = state.result
-  const docr = r.duty_of_care_record ?? {}
-  const integrity = docr.integrity ?? {}
-  const findings = r.findings ?? []
-  const top = findings.slice(0, 5)
-
-  const lines: Array<{ k: string; v: string }> = [
-    { k: 'intercept', v: 'outbound action captured' },
-    { k: 'profile', v: profile },
-    { k: 'run_id', v: r.run_id ?? '\u2014' },
-    { k: 'verdict_code', v: r.verdict_code ?? '\u2014' },
-    { k: 'status', v: r.status ?? '\u2014' },
-    { k: 'findings', v: String(findings.length) },
-    ...top.map((f) => ({
-      k: '  \u00b7 ' + (f.rule_id ?? 'RULE'),
-      v: (f.message ?? f.category ?? '').slice(0, 80),
-    })),
-    {
-      k: 'record_hash',
-      v: integrity.record_hash ? integrity.record_hash.slice(0, 24) + '\u2026' : '\u2014',
-    },
-    { k: 'signature_algo', v: integrity.signature_algo ?? 'Ed25519' },
-    {
-      k: 'signed',
-      v: integrity.signature ? 'yes (' + integrity.signature.slice(0, 12) + '\u2026)' : 'no',
-    },
-  ]
-
   return (
-    <div className="space-y-1">
-      {lines.map((l, i) => (
-        <motion.p
-          key={i}
-          initial={{ opacity: 0, x: -4 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: i * 0.06, duration: 0.18 }}
-          className="whitespace-pre-wrap break-all"
-        >
-          <span className="text-[#6B7280]">{l.k.padEnd(16)}</span>{' '}
-          <span className="text-[#D1D5DB]">{l.v}</span>
-        </motion.p>
-      ))}
+    <div className="flex min-h-[22rem] flex-col items-center justify-center rounded-doc border border-dashed border-ink/25 px-6 py-12 text-center">
+      {state.kind === 'error' ? (
+        <>
+          <p className="heading text-[24px] text-verdict-block">No record issued.</p>
+          <p className="mt-2 max-w-xs text-[15px] leading-relaxed text-ink-2">
+            The engine returned an error. See the message with the action.
+          </p>
+        </>
+      ) : (
+        <>
+          <p className="heading text-[24px]">Awaiting an AI action.</p>
+          <p className="mt-2 max-w-xs text-[15px] leading-relaxed text-ink-2">
+            {profile} profile loaded. The signed record is issued here once the action is
+            intercepted.
+          </p>
+        </>
+      )}
     </div>
   )
 }
 
 function RuntimeStream({ profile }: { profile: string }) {
-  const steps = [
-    'intercept       outbound action captured',
-    'profile         ' + profile,
-    'rules           loading policy bundle\u2026',
-    'scan            tokenizing input\u2026',
-    'hash            computing input_hash\u2026',
-    'evaluate        resolving findings\u2026',
-    'docr            building Duty-of-Care Record\u2026',
-    'sign            Ed25519\u2026',
+  const steps: Array<[string, string]> = [
+    ['intercept', 'outbound action captured'],
+    ['profile', profile],
+    ['rules', 'loading policy bundle…'],
+    ['scan', 'tokenizing input…'],
+    ['hash', 'computing input_hash…'],
+    ['evaluate', 'resolving findings…'],
+    ['docr', 'building Duty-of-Care Record…'],
+    ['sign', 'Ed25519…'],
   ]
   return (
-    <div className="space-y-1">
-      {steps.map((s, i) => (
-        <motion.p
-          key={i}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: i * 0.18, duration: 0.2 }}
-        >
-          <span className="text-accent">{'\u2192'}</span> {s}
-        </motion.p>
-      ))}
+    <div aria-busy="true" className="min-h-[22rem]">
+      <p className="sr-only">Evaluating the action against policy.</p>
+      <ol className="border-t border-rule font-mono text-[12.5px]">
+        {steps.map(([k, v], i) => (
+          <li
+            key={k}
+            className="sig-step grid grid-cols-[6.5rem_minmax(0,1fr)] gap-x-3 border-b border-rule py-2"
+            style={{ animationDelay: `${i * 180}ms` }}
+          >
+            <span className="text-ink-3">{k}</span>
+            <span className="break-words text-ink">
+              {v}
+              {i === steps.length - 1 && (
+                <span aria-hidden="true" className="caret ml-1 inline-block h-[1em] w-[0.5ch] translate-y-[2px] bg-ink" />
+              )}
+            </span>
+          </li>
+        ))}
+      </ol>
     </div>
   )
 }
 
-function Receipt({
+function IssuedRecord({
   result,
+  profile,
   onVerify,
 }: {
   result: EngineResponse
+  profile: string
   onVerify: (runId: string) => void
 }) {
+  const code = result.verdict_code ?? 'UNKNOWN'
+  const v = verdictTone(code)
   const docr = result.duty_of_care_record ?? {}
   const integrity = docr.integrity ?? {}
   const policy = docr.policy ?? {}
   const input = docr.input ?? {}
   const receipt = result.receipt ?? {}
   const runId = result.run_id
+  const findings = result.findings ?? []
+  const top = findings.slice(0, 5)
+  const isSigned = Boolean(integrity.signature || receipt.signature)
 
   return (
-    <motion.div
-      key="receipt"
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.4, delay: 0.45 }}
-      className="mt-6 rounded-2xl border border-white/[0.08] bg-[#0D0D0D] p-6"
+    <article
+      aria-label="Signed Duty-of-Care Record"
+      className="perf-top perf-bottom relative bg-paper-3 text-ink"
+      style={{
+        boxShadow:
+          '0 1px 0 rgba(18,18,18,0.06), 0 2px 4px -2px rgba(18,18,18,0.12), 0 28px 50px -34px rgba(18,18,18,0.5)',
+      }}
     >
-      <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <div>
-          <p className="text-[11px] text-[#8A8A8A] tracking-[0.22em] uppercase font-semibold">
-            Signed Duty-of-Care Record
-          </p>
-          <p className="text-[12px] text-[#6B7280] font-mono mt-1">
-            run_id: {runId ?? '\u2014'}
+      {/* Header band */}
+      <header className="relative overflow-hidden border-b border-ink/80 px-5 pb-4 pt-5 sm:px-6">
+        <Guilloche
+          className="absolute inset-x-0 top-0 h-16 w-full text-seal"
+          opacity={0.28}
+        />
+        <div className="relative flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <p className="label text-[11px] tracking-[0.14em]">Signed Duty-of-Care Record</p>
+          <p className="min-w-0 truncate font-mono text-[11.5px] text-ink-2">
+            run_id: {runId ?? '—'}
           </p>
         </div>
-        <button
-          onClick={() => runId && onVerify(runId)}
-          disabled={!runId}
-          className="text-[13px] font-semibold text-accent border border-accent/40 px-4 py-2 rounded-lg hover:bg-accent/10 transition-colors disabled:opacity-50"
-        >
-          Verify signature
-        </button>
-      </div>
-      <div className="grid sm:grid-cols-2 gap-3 text-[12px] font-mono">
-        <Field k="verdict_code" v={result.verdict_code} />
-        <Field k="status" v={result.status} />
-        <Field k="record_hash" v={integrity.record_hash} mono />
-        <Field k="chain_prev_hash" v={integrity.chain_prev_hash} mono />
-        <Field k="policy_digest" v={policy.policy_digest} mono />
-        <Field k="input_hash" v={input.input_hash} mono />
-        <Field k="signed_at" v={receipt.signed_at ?? result.timestamp} />
-        <Field k="signature_algo" v={integrity.signature_algo ?? receipt.signature_algo ?? 'Ed25519'} />
-      </div>
-      <p className="text-[11px] text-white/45 mt-5 leading-relaxed">
-        Notarization-grade. Anyone with the published public key can re-verify
-        this receipt offline.{' '}
-        <Link href="/verify" className="text-accent underline underline-offset-4">
-          Try the web verifier
-        </Link>{' '}
-        or run{' '}
-        <span className="font-mono text-white/65">npm i -g @gobotsai/govtrace</span>
-        .{' '}
-        <Link href="/spec" className="text-accent underline underline-offset-4">
-          Read the spec
-        </Link>
-        .
+        <div className="relative mt-4 flex flex-col gap-3 sm:flex-row-reverse sm:items-start sm:justify-between sm:gap-6">
+          <Stamp id="demo-verdict" tone={v.tone} size="md" className="shrink-0 -rotate-3">
+            {v.label}
+          </Stamp>
+          <p className="heading text-[22px] leading-[1.2] sm:text-[24px]">
+            {verdictSummary(code, findings.length)}
+          </p>
+        </div>
+        {result.reason_line && (
+          <p className="relative mt-3 text-[14.5px] leading-relaxed text-ink-2">
+            {result.reason_line}
+          </p>
+        )}
+      </header>
+      <p className="microtext border-b border-rule px-5 py-1 text-ink-3 sm:px-6" aria-hidden="true">
+        {'ed25519 · canonical json · sha-256 · verifiable without the issuer · '.repeat(4)}
       </p>
-    </motion.div>
+
+      {/* Findings */}
+      <section aria-label="Findings" className="px-5 pt-5 sm:px-6">
+        <div className="flex items-baseline justify-between border-b border-ink/80 pb-1.5">
+          <p className="label text-[11px] text-ink-2">Findings</p>
+          <p className="tnum font-mono text-[12px] text-ink-3">{findings.length}</p>
+        </div>
+        {top.length === 0 ? (
+          <p className="border-b border-rule py-2.5 text-[14px] text-ink-3">No findings.</p>
+        ) : (
+          <ol>
+            {top.map((f, i) => (
+              <li
+                key={i}
+                className="grid gap-x-3 gap-y-0.5 border-b border-rule py-2.5 sm:grid-cols-[9rem_minmax(0,1fr)]"
+              >
+                <span className={`truncate font-mono text-[12px] ${v.text}`} title={f.rule_id}>
+                  {f.rule_id ?? 'RULE'}
+                </span>
+                <span className="text-[14px] leading-snug text-ink-2">
+                  {f.message ?? f.category ?? f.signal ?? f.rule_label ?? ''}
+                  {f.severity && (
+                    <span className="ml-2 whitespace-nowrap text-[12.5px] text-ink-3">
+                      {f.severity}
+                    </span>
+                  )}
+                </span>
+              </li>
+            ))}
+            {findings.length > top.length && (
+              <li className="border-b border-rule py-2 text-[13px] text-ink-3">
+                +{findings.length - top.length} more in the record
+              </li>
+            )}
+          </ol>
+        )}
+      </section>
+
+      {/* Record fields */}
+      <section aria-label="Record" className="px-5 pt-6 sm:px-6">
+        <div className="border-b border-ink/80 pb-1.5">
+          <p className="label text-[11px] text-ink-2">Record</p>
+        </div>
+        <dl>
+          <Field k="intercept" v="outbound action captured" />
+          <Field k="profile" v={profile} />
+          <Field k="verdict_code" v={result.verdict_code} />
+          <Field k="status" v={result.status} />
+          <Field k="record_hash" v={integrity.record_hash} mono />
+          <Field k="chain_prev_hash" v={integrity.chain_prev_hash} mono />
+          <Field k="policy_digest" v={policy.policy_digest} mono />
+          <Field k="input_hash" v={input.input_hash} mono />
+          <Field k="signed_at" v={receipt.signed_at ?? result.timestamp} />
+          <Field
+            k="signature_algo"
+            v={integrity.signature_algo ?? receipt.signature_algo ?? 'Ed25519'}
+          />
+          <Field
+            k="signed"
+            v={integrity.signature ? 'yes (' + integrity.signature.slice(0, 12) + '…)' : 'no'}
+          />
+        </dl>
+      </section>
+
+      {/* Verification */}
+      <footer className="flex items-end justify-between gap-4 px-5 pb-7 pt-6 sm:px-6">
+        <div className="min-w-0">
+          <button
+            type="button"
+            onClick={() => runId && onVerify(runId)}
+            disabled={!runId}
+            className="btn-rule py-2.5 text-[14px] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent disabled:hover:text-ink"
+          >
+            Verify signature
+          </button>
+          <p className="mt-4 max-w-[26rem] text-[13px] leading-relaxed text-ink-3">
+            Notarization-grade. Anyone with the published public key can re-verify this receipt
+            offline.{' '}
+            <Link href="/verify" className="link-ink text-ink-2">
+              Try the web verifier
+            </Link>{' '}
+            or run{' '}
+            <code className="whitespace-nowrap rounded-doc bg-paper-2 px-1 py-px font-mono text-[12px] text-ink">
+              npm i -g @gobotsai/govtrace
+            </code>
+            .{' '}
+            <Link href="/spec" className="link-ink text-ink-2">
+              Read the spec
+            </Link>
+            .
+          </p>
+        </div>
+        {isSigned && (
+          <Seal
+            id="demo-seal"
+            size={88}
+            className="seal-stamp shrink-0"
+            style={{ '--d': '0.15s' } as React.CSSProperties}
+          />
+        )}
+      </footer>
+    </article>
   )
 }
 
-function Field({
-  k,
-  v,
-  mono,
-}: {
-  k: string
-  v?: string | null
-  mono?: boolean
-}) {
-  const value = v ?? '\u2014'
+function Field({ k, v, mono }: { k: string; v?: string | null; mono?: boolean }) {
+  const value = v ?? '—'
   return (
-    <div className="rounded-lg border border-white/[0.06] bg-black/30 px-3 py-2">
-      <p className="text-[10px] text-[#6B7280] uppercase tracking-wider mb-0.5">
-        {k}
-      </p>
-      <p className={`text-[#D1D5DB] ${mono ? 'truncate' : ''}`} title={mono ? value : undefined}>
+    <div className="grid grid-cols-[7.5rem_minmax(0,1fr)] gap-x-3 border-b border-rule py-2 font-mono sm:grid-cols-[9rem_minmax(0,1fr)]">
+      <dt className="text-[12px] text-ink-3">{k}</dt>
+      <dd
+        className={`tnum text-[12.5px] ${v == null ? 'text-ink-3' : 'text-ink'} ${
+          mono ? 'truncate' : 'break-words'
+        }`}
+        title={mono ? value : undefined}
+      >
         {value}
-      </p>
+      </dd>
     </div>
   )
 }
@@ -666,57 +669,81 @@ function VerifyModal({
   const status = !loading ? state.status : 0
   const reason = !loading ? state.data?.failure_reason : undefined
   const msg = !loading ? state.data?.message : undefined
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    dialogRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose])
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/45 p-4"
       onClick={onClose}
     >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.96 }}
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="verify-title"
+        aria-busy={loading}
+        tabIndex={-1}
         onClick={(e) => e.stopPropagation()}
-        className="rounded-2xl border border-white/10 bg-[#0D0D0D] p-7 max-w-md w-full"
+        className="max-h-[calc(100vh-2rem)] w-full max-w-md overflow-y-auto rounded-doc border border-ink/80 bg-paper-3 text-ink shadow-[0_28px_60px_-30px_rgba(18,18,18,0.6)]"
       >
-        <p className="text-[11px] text-[#8A8A8A] tracking-[0.22em] uppercase font-semibold mb-2">
-          Independent verification
-        </p>
-        {loading ? (
-          <p className="text-[14px] text-[#9CA3AF]">{'Re-checking signature\u2026'}</p>
-        ) : (
-          <>
-            <h3 className="text-[22px] font-bold text-[#F5F5F5] mb-2 leading-tight">
-              {ok
-                ? 'Signature valid.'
-                : status === 503
-                  ? 'Verification storage off in this demo.'
-                  : 'Could not verify signature.'}
-            </h3>
-            <p className="text-[13px] text-[#9CA3AF] leading-relaxed">
-              {ok
-                ? 'Hash chain re-walked end to end. Each record\u2019s Ed25519 signature checked against the published public key. Record is authentic and unmodified.'
-                : status === 503
-                  ? 'The hosted demo runs on a stateless function, so the audit chain is not persisted between requests. The signature on every receipt is real. To walk the full chain, point the engine at a persistent volume.'
-                  : (reason || msg || 'The verify endpoint returned a non-OK result.')}
+        <div className="flex items-center justify-between gap-4 border-b border-rule px-6 py-3">
+          <p className="text-[13px] text-ink-3">Independent verification</p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close"
+            className="-mr-2 inline-flex h-8 w-8 items-center justify-center rounded-doc text-ink-2 transition-colors hover:bg-paper-2 hover:text-ink"
+          >
+            <Cross size={12} />
+          </button>
+        </div>
+        <div className="px-6 pb-6 pt-5">
+          {loading ? (
+            <p id="verify-title" className="heading text-[22px] text-ink-2">
+              {'Re-checking signature…'}
             </p>
-            {!ok && status !== 503 && state.data && (
-              <pre className="mt-4 rounded-md bg-black border border-white/10 p-3 text-[11px] text-[#9CA3AF] font-mono overflow-x-auto">
-                {JSON.stringify(state.data, null, 2).slice(0, 600)}
-              </pre>
-            )}
-            <button
-              onClick={onClose}
-              className="mt-5 w-full bg-accent text-white font-semibold py-2.5 rounded-lg hover:bg-[#c44625] transition-colors text-[13px]"
-            >
-              Close
-            </button>
-          </>
-        )}
-      </motion.div>
-    </motion.div>
+          ) : (
+            <>
+              <div className="flex items-start justify-between gap-4">
+                <h3 id="verify-title" className="heading text-[26px] leading-[1.15]">
+                  {ok
+                    ? 'Signature valid.'
+                    : status === 503
+                      ? 'Verification storage off in this demo.'
+                      : 'Could not verify signature.'}
+                </h3>
+                {ok && (
+                  <Check size={22} className="mt-1 shrink-0 text-verdict-safe" />
+                )}
+              </div>
+              <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+                {ok
+                  ? 'Hash chain re-walked end to end. Each record’s Ed25519 signature checked against the published public key. Record is authentic and unmodified.'
+                  : status === 503
+                    ? 'The hosted demo runs on a stateless function, so the audit chain is not persisted between requests. The signature on every receipt is real. To walk the full chain, point the engine at a persistent volume.'
+                    : reason || msg || 'The verify endpoint returned a non-OK result.'}
+              </p>
+              {!ok && status !== 503 && state.data && (
+                <pre className="mt-4 max-h-64 overflow-auto rounded-doc border border-rule bg-paper-2 p-3 font-mono text-[11.5px] leading-relaxed text-ink-2">
+                  {JSON.stringify(state.data, null, 2).slice(0, 600)}
+                </pre>
+              )}
+              <button type="button" onClick={onClose} className="btn-ink mt-6 w-full py-3">
+                Close
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
   )
 }

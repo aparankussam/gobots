@@ -1,192 +1,113 @@
-'use client'
+import Link from 'next/link'
+import Stamp from './doc/Stamp'
+import Claim from './Claim'
+import Receipt from './doc/Receipt'
+import InView from './home/InView'
+import HomeChecker from './home/HomeChecker'
+import { Arrow, ArrowUpRight } from './doc/icons'
+import { SPECIMENS } from '@/content/specimens'
 
-import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
 
-const DEMO_URL = process.env.NEXT_PUBLIC_GOVTRACE_URL
-const isDemoAvailable = Boolean(DEMO_URL)
-// Timeout before declaring the iframe as unreachable (ms)
-const LOAD_TIMEOUT = 9000
-
-type IframeState = 'loading' | 'loaded' | 'failed'
-
-type IframeFallbackProps = {
-  demoUrl?: string
-}
-
-function IframeFallback({ demoUrl }: IframeFallbackProps) {
-  const hasExternalDemo = Boolean(demoUrl)
-
-  return (
-    <div className="relative overflow-hidden bg-[radial-gradient(circle_at_top,rgba(245,116,69,0.16),transparent_32%),linear-gradient(180deg,#111111_0%,#090909_100%)]">
-      <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.04),transparent_30%,transparent_70%,rgba(245,116,69,0.06))]" />
-      <div className="relative px-6 py-12 sm:px-8 sm:py-14 md:px-12 md:py-16">
-        <div className="mx-auto flex max-w-4xl flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl text-center md:text-left">
-            <span className="inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#D6D6D6]">
-              {hasExternalDemo ? 'Demo currently unavailable' : 'Interactive demo coming soon'}
-            </span>
-            <h3 className="mt-5 text-[28px] font-extrabold leading-tight tracking-tight text-[#F5F5F5] sm:text-[34px]">
-              {hasExternalDemo ? 'The live environment is offline right now.' : 'A guided LiveProof experience is on the way.'}
-            </h3>
-            <p className="mt-4 max-w-xl text-[15px] leading-7 text-[#B7B7B7] sm:text-[16px]">
-              {hasExternalDemo
-                ? 'GoVTraceAI is still available as a product layer, and the interactive environment will be back shortly.'
-                : 'We are shaping the public demo to reflect the same production-grade guardrails, speed, and clarity our clients see in live deployments.'}
-            </p>
-          </div>
-
-          {hasExternalDemo ? (
-            <a
-              href={demoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 self-center rounded-xl bg-accent px-6 py-3 text-[14px] font-semibold text-white shadow-lg shadow-accent/20 transition-all hover:bg-[#c44625] active:scale-[0.98] md:self-auto"
-            >
-              Open Demo in New Tab
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
-          ) : null}
-        </div>
-
-        <div className="relative mt-10 grid gap-3 sm:grid-cols-3">
-          {[
-            'Instant SAFE / WARNING / BLOCK decisions',
-            'Policy-aware review tuned for real workflows',
-            'Deployable as an API or embedded control layer',
-          ].map((item) => (
-            <div
-              key={item}
-              className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 text-center text-[13px] font-medium leading-6 text-[#D2D2D2] backdrop-blur-sm sm:text-left"
-            >
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
+const INDEX = [
+  { href: '/demo', title: 'Try the live gatekeeper', note: 'Run a scenario, get a signed verdict', external: false },
+  { href: '/verify', title: 'Verify a receipt', note: 'Check a signature yourself', external: false },
+  { href: '/spec', title: 'Read the open spec', note: 'Receipt Format v1 · CC BY 4.0', external: false },
+  { href: '/evidence-gap', title: 'See the evidence artifact', note: 'Why logs are not evidence', external: false },
+  { href: 'https://www.npmjs.com/package/@gobotsai/govtrace', title: 'Install the SDK', note: '@gobotsai/govtrace', external: true },
+]
 
 export default function LiveProof() {
-  const [iframeState, setIframeState] = useState<IframeState>(isDemoAvailable ? 'loading' : 'failed')
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => {
-    if (!isDemoAvailable) return
-
-    timeoutRef.current = setTimeout(() => {
-      setIframeState(s => s === 'loading' ? 'failed' : s)
-    }, LOAD_TIMEOUT)
-    return () => { if (timeoutRef.current) clearTimeout(timeoutRef.current) }
-  }, [])
-  function handleLoad() {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    setIframeState('loaded')
-  }
-
-  function handleError() {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    setIframeState('failed')
-  }
-
   return (
-    <section id="live-proof" className="py-24 md:py-32 border-t border-white/[0.04]">
-      <div className="max-w-6xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
-        >
-          <div className="w-8 h-[2px] bg-accent mb-2 mx-auto" />
-          <p className="text-accent text-xs font-semibold tracking-[0.22em] uppercase mb-3">
-            Live Proof
-          </p>
-          <h2 className="text-[38px] md:text-[48px] font-extrabold text-[#F5F5F5] leading-[1.1] tracking-tight mb-4">
-            See it run.
+    <section id="live-proof" className="border-t border-ink/80 py-24 md:py-32">
+      <div className="wrap">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
+          <h2 className="heading text-[clamp(2.5rem,5.4vw,4.25rem)] lg:col-span-6">
+            Every decision leaves a receipt<span className="text-seal">.</span>
           </h2>
-          <p className="text-[17px] text-[#CFCFCF] max-w-xl mx-auto leading-relaxed">
-            Paste any prompt. Get instant{' '}
-            <span className="text-[#22C55E] font-semibold">SAFE</span>{' '}
-            /{' '}
-            <span className="text-[#F59E0B] font-semibold">WARNING</span>{' '}
-            /{' '}
-            <span className="text-red-400 font-semibold">BLOCK</span>.
-            <br />
-            This is how Gobots systems work in production.
+          <p className="text-[18px] leading-[1.55] text-ink-2 lg:col-span-5 lg:col-start-8 lg:pt-3">
+            GoVTraceAI sits between your AI and your systems. It returns{' '}
+            <span className="font-semibold text-verdict-safe">SAFE</span>,{' '}
+            <span className="font-semibold text-verdict-warn">WARNING</span> or{' '}
+            <span className="font-semibold text-verdict-block">BLOCK</span> on every action and{' '}
+            <Claim id="receipts.signed">signs the result</Claim>, so an auditor can check it without asking us.
           </p>
-        </motion.div>
+        </div>
 
-        {/* Live indicator */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.45, delay: 0.1 }}
-          className="flex items-center gap-2 mb-4 justify-center"
-        >
-          <span className={`w-1.5 h-1.5 rounded-full ${
-            iframeState === 'loaded'  ? 'bg-[#22C55E] animate-live-dot' :
-            iframeState === 'failed'  ? 'bg-[#F59E0B]' :
-            'bg-[#555] animate-live-dot'
-          }`} />
-          <span className="text-[11px] font-semibold tracking-widest text-[#555] uppercase">
-            {iframeState === 'loaded' ? 'GoVTraceAI · live' :
-             iframeState === 'failed' ? (isDemoAvailable ? 'GoVTraceAI · demo currently unavailable' : 'GoVTraceAI · interactive demo coming soon') :
-             'GoVTraceAI · connecting…'}
-          </span>
-        </motion.div>
+        <div className="mt-16 grid grid-cols-1 items-start gap-x-12 gap-y-14 lg:grid-cols-12">
+          <InView className="lg:col-span-5">
+            <Receipt />
+          </InView>
+          <div className="lg:col-span-6 lg:col-start-7">
+            <HomeChecker />
+          </div>
+        </div>
 
-        {/* Demo container */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="rounded-2xl border border-white/[0.07] overflow-hidden shadow-2xl shadow-black/50"
-          style={{ minHeight: iframeState === 'failed' ? 'auto' : '640px' }}
-        >
-          {iframeState === 'failed' ? (
-            <IframeFallback demoUrl={DEMO_URL || undefined} />
-          ) : (
-            <div className="relative" style={{ height: '640px' }}>
-              {/* Loading skeleton */}
-              {iframeState === 'loading' && (
-                <div className="absolute inset-0 bg-[#0A0A0A] flex items-center justify-center gap-3 z-10">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent animate-live-dot" />
-                  <span className="text-[13px] text-[#555] font-mono">Connecting to demo…</span>
-                </div>
-              )}
-              <iframe
-                src={DEMO_URL || undefined}
-                title="GoVTraceAI — Live Demo"
-                className="w-full h-full"
-                style={{ border: 'none', background: '#080808' }}
-                loading="lazy"
-                onLoad={handleLoad}
-                onError={handleError}
-              />
-            </div>
-          )}
-        </motion.div>
-
-        <p className="text-center text-[13px] text-[#8A8A8A] mt-5">
-          GoVTraceAI · Available as API or embedded layer
+        <p className="mt-20 text-[13.5px] text-ink-3">
+          Illustrative outcomes for three example inputs. Not engine output: the live check above
+          returns the engine&rsquo;s own result.
         </p>
+        <div className="mt-4 grid border-t border-rule md:grid-cols-3">
+          {SPECIMENS.map((s, i) => (
+            <article
+              key={s.verdict}
+              className={`flex flex-col gap-6 border-b border-rule py-8 md:border-b-0 md:py-10 ${
+                i > 0 ? 'md:border-l md:pl-8' : ''
+              } ${i < 2 ? 'md:pr-8' : ''}`}
+            >
+              <p className="text-[13px] text-ink-3">Example input</p>
+              <p className="heading -mt-3 text-[23px] leading-[1.2]">“{s.prompt}”</p>
+              <div className="mt-auto flex flex-wrap items-end justify-between gap-4">
+                <p className="max-w-[15rem] text-[14px] leading-snug text-ink-2">{s.reason}</p>
+                <Stamp id={`spec-${s.verdict}`} tone={s.tone} size="md" className="shrink-0 -rotate-6">
+                  {s.verdict}
+                </Stamp>
+              </div>
+            </article>
+          ))}
+        </div>
 
-        <p className="text-center mt-3">
-          <a
-            href="/evidence-gap"
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-accent hover:text-accent/80 transition-colors"
-          >
-            See the GoVTraceAI evidence artifact
-            <span aria-hidden="true">→</span>
-          </a>
-        </p>
+        <div className="mt-20 grid grid-cols-1 gap-6 border-t border-ink/80 pt-8 lg:grid-cols-12">
+          <p className="heading text-[clamp(1.5rem,2.6vw,2rem)] leading-snug lg:col-span-6">
+            <Claim id="trust.data">Your data stays in your environment.</Claim>
+          </p>
+          <p className="max-w-[34rem] text-[16.5px] leading-[1.55] text-ink-2 lg:col-span-5 lg:col-start-8">
+            In a Production Sprint we deploy into your cloud and your tools, under your access
+            controls. Our hosted products, such as the live demo, run on Gobots infrastructure. Every
+            AI decision leaves a signed record your auditors can check without asking us.
+          </p>
+        </div>
+
+        <nav aria-label="Evidence" className="mt-16 grid grid-cols-1 gap-10 lg:grid-cols-12">
+          <p className="max-w-xs text-[15px] leading-relaxed text-ink-2 lg:col-span-4">
+            Don&rsquo;t take our word for it. Run it, verify it, or read how it works.
+          </p>
+          <ul className="border-t border-ink/80 lg:col-span-8">
+            {INDEX.map((l) => {
+              const inner = (
+                <>
+                  <span className="heading text-[22px] md:text-[26px]">{l.title}</span>
+                  <span className="hidden font-mono text-[12px] text-ink-3 sm:block">{l.note}</span>
+                  {l.external ? <ArrowUpRight size={16} /> : <Arrow size={16} />}
+                </>
+              )
+              const cls =
+                'group grid grid-cols-[1fr_auto] items-center gap-6 py-4 transition-colors hover:text-seal-ink sm:grid-cols-[1fr_auto_auto]'
+              return (
+                <li key={l.href} className="border-b border-rule">
+                  {l.external ? (
+                    <a href={l.href} target="_blank" rel="noopener noreferrer" className={cls}>
+                      {inner}
+                    </a>
+                  ) : (
+                    <Link href={l.href} className={cls}>
+                      {inner}
+                    </Link>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
       </div>
     </section>
   )
