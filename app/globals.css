@@ -2,79 +2,247 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root { color-scheme: dark; }
+/* ── Base: a ruled paper document ─────────────────────────── */
 
-  html { scroll-behavior: smooth; }
+@layer base {
+  :root {
+    color-scheme: light;
+    --paper: #F2F2EE;
+    --ink: #121212;
+    --seal: #E0643A;
+    --seal-ink: #B4431F;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-text-size-adjust: 100%;
+  }
 
   body {
-    background: #050505;
-    color: #CFCFCF;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-feature-settings: 'ss01', 'cv11';
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
 
   ::selection {
-    background: rgba(212, 83, 42, 0.28);
-    color: #F5F5F5;
+    background: var(--seal);
+    color: #fff;
   }
 
-  ::-webkit-scrollbar { width: 3px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #1e1e1e; border-radius: 2px; }
+  :focus-visible {
+    outline: 2px solid var(--seal-ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  a { text-underline-offset: 0.22em; text-decoration-thickness: 1px; }
+
+  input, textarea, select { caret-color: var(--seal); }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #6A6A63;
+    opacity: 1;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--paper); }
+  ::-webkit-scrollbar-thumb {
+    background: #C9C9C1;
+    border: 3px solid var(--paper);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover { background: #9F9F97; }
+
+  .tnum { font-variant-numeric: tabular-nums; }
 }
 
-/* ── Keyframes ─────────────────────────────────── */
+/* ── Components ───────────────────────────────────────────── */
 
-@keyframes travelRight {
-  0%   { left: -14%; opacity: 0; }
-  8%   { opacity: 1; }
-  92%  { opacity: 1; }
-  100% { left: 114%; opacity: 0; }
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-page px-4 sm:px-6 lg:px-10;
+  }
+
+  .display {
+    font-family: var(--font-serif), Georgia, serif;
+    font-variation-settings: 'opsz' 60;
+    font-weight: 500;
+    letter-spacing: -0.028em;
+    line-height: 0.98;
+  }
+
+  .heading {
+    font-family: var(--font-serif), Georgia, serif;
+    font-variation-settings: 'opsz' 48;
+    font-weight: 500;
+    letter-spacing: -0.022em;
+    line-height: 1.04;
+  }
+
+  .label {
+    font-family: var(--font-sans), system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-stretch: 87.5%;
+  }
+
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-doc px-5 py-3 text-[15px] font-semibold transition-[background-color,color,box-shadow,transform] duration-200 ease-out-expo active:translate-y-px;
+  }
+  .btn-ink {
+    @apply btn bg-ink text-paper hover:bg-[#2A2A27];
+    box-shadow: 0 1px 0 rgba(0,0,0,0.25), 0 6px 16px -10px rgba(18,18,18,0.6);
+  }
+  /* The one conversion action (Start a Production Sprint). Ink text: white on this orange fails contrast. */
+  .btn-seal {
+    @apply btn bg-seal text-ink hover:bg-[#D6582D];
+    box-shadow: 0 1px 0 rgba(180,67,31,0.35), 0 6px 16px -10px rgba(180,67,31,0.7);
+  }
+  .btn-rule {
+    @apply btn border border-ink/80 text-ink hover:bg-ink hover:text-paper;
+  }
+  .btn-paper {
+    @apply btn bg-paper text-ink hover:bg-white;
+  }
+  .btn-rule-inv {
+    @apply btn border border-paper/50 text-paper hover:bg-paper hover:text-ink;
+  }
+
+  .link-ink {
+    @apply underline decoration-ink/30 hover:decoration-seal transition-colors;
+  }
+
+  /* Perforated tear edge for receipts */
+  .perf-top,
+  .perf-bottom {
+    position: relative;
+  }
+  .perf-top::before,
+  .perf-bottom::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    background: radial-gradient(circle at 5px 4px, var(--paper) 3px, transparent 3.5px) 0 0 / 10px 8px repeat-x;
+  }
+  .perf-top::before { top: -4px; }
+  .perf-bottom::after { bottom: -4px; }
+
+  /* Microtext rule, as on security paper */
+  .microtext {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 6.5px;
+    line-height: 1;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-transform: uppercase;
+    user-select: none;
+  }
 }
 
-@keyframes nodePulseRing {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(212,83,42,0); }
-  50%       { box-shadow: 0 0 0 7px rgba(212,83,42,0.12); }
+/* ── Signature moment: the receipt being signed ───────────── */
+
+@keyframes inkIn {
+  from { opacity: 0; filter: blur(3px); transform: translateX(-3px); }
+  to   { opacity: 1; filter: blur(0); transform: none; }
 }
 
-@keyframes liveDot {
+@keyframes stamp {
+  0%   { opacity: 0; transform: rotate(-14deg) scale(1.9); filter: blur(4px); }
+  55%  { opacity: 1; transform: rotate(-11deg) scale(0.94); filter: blur(0); }
+  75%  { transform: rotate(-12deg) scale(1.02); }
+  100% { opacity: 1; transform: rotate(-12deg) scale(1); }
+}
+
+@keyframes corePin {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+@keyframes coreNode {
+  0%   { opacity: 0; transform: scale(0.2); box-shadow: 0 0 0 0 rgba(224, 100, 58, 0.6); }
+  60%  { opacity: 1; transform: scale(1.35); box-shadow: 0 0 0 8px rgba(224, 100, 58, 0); }
+  100% { opacity: 1; transform: scale(1); box-shadow: none; }
+}
+
+@keyframes corePress {
+  0%   { opacity: 0; transform: rotate(-14deg) scale(1.35); }
+  70%  { opacity: 1; transform: rotate(-11.5deg) scale(0.97); }
+  100% { opacity: 1; transform: rotate(-12deg) scale(1); }
+}
+
+@keyframes cmpFill {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+@keyframes cmpFade {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes caret {
   0%, 100% { opacity: 1; }
-  50%       { opacity: 0.25; }
+  50% { opacity: 0; }
 }
 
-@keyframes fadeInLine {
-  from { opacity: 0; transform: translateX(-5px); }
-  to   { opacity: 1; transform: translateX(0); }
+.seal-stamp { transform: rotate(-12deg); }
+.cmp-stamp { transform: rotate(-12deg); }
+.cmp-fill { transform-origin: left; }
+.core-seal { transform: rotate(-12deg); }
+.core-pin { transform-origin: top; }
+.void-stamp { transform: rotate(-6deg); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .sig-step {
+    animation: inkIn 520ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: calc(500ms + var(--i, 0) * 340ms);
+  }
+  .seal-stamp {
+    animation: stamp 640ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    animation-delay: var(--d, 2.9s);
+  }
+  .caret { animation: caret 1s steps(1) infinite; }
+
+  /* Comparison graphic: week-1 bar fills, LIVE stamps, the rest fades in. */
+  .is-inview .cmp-fill { animation: cmpFill 700ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+  .is-inview .cmp-stamp { animation: stamp 640ms cubic-bezier(0.16, 1, 0.3, 1) 750ms both; }
+  .is-inview .cmp-fade { animation: cmpFade 520ms ease-out both; animation-delay: var(--d, 0ms); }
+  .js-inview:not(.is-inview) .cmp-fill,
+  .js-inview:not(.is-inview) .cmp-stamp,
+  .js-inview:not(.is-inview) .cmp-fade { opacity: 0; }
+
+  /* One-core plug-in, slow enough to follow: the pin draws down (1.4s), the node lands on the core, then that record's seal presses. */
+  .is-inview .core-pin { animation: corePin 1400ms cubic-bezier(0.45, 0, 0.2, 1) both; animation-delay: var(--d, 0ms); }
+  .is-inview .core-node { animation: coreNode 700ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--d, 0ms) + 1300ms); }
+  .is-inview .core-seal { animation: corePress 800ms cubic-bezier(0.16, 1, 0.3, 1) both; animation-delay: calc(var(--d, 0ms) + 1900ms); }
+  .js-inview:not(.is-inview) .core-pin,
+  .js-inview:not(.is-inview) .core-node,
+  .js-inview:not(.is-inview) .core-seal { opacity: 0; }
+
+  /* Inside <InView>: hold the run trace until it scrolls into view. Applies
+     only after hydration (js-inview), so the slip is legible without JS. */
+  .js-inview:not(.is-inview) .sig-step,
+  .js-inview:not(.is-inview) .seal-stamp {
+    animation: none;
+    opacity: 0;
+  }
 }
 
-@keyframes spinSlow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
-
-@keyframes progressBar {
-  from { width: 0%; }
-  to   { width: 100%; }
-}
-
-/* ── Global input/placeholder overrides ─────────── */
-/* Ensure placeholder text is always readable — never near-invisible */
-input::placeholder,
-textarea::placeholder {
-  color: #737373 !important;
-  opacity: 1 !important;
-}
-
-input,
-textarea {
-  color: #F5F5F5;
-}
-
-/* ── Utility ────────────────────────────────────── */
-
-.animate-travel     { animation: travelRight 1.05s linear forwards; }
-.animate-live-dot   { animation: liveDot 1.4s ease-in-out infinite; }
-.animate-node-ring  { animation: nodePulseRing 2s ease-in-out infinite; }
-.animate-spin-slow  { animation: spinSlow 2.8s linear infinite; }
-.animate-fade-line  { animation: fadeInLine 0.18s ease-out forwards; }

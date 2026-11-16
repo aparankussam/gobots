@@ -3,430 +3,694 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>The Evidence Gap · GoVTraceAI · gobots.ai</title>
-<meta name="description" content="A counterfactual audit artifact for the ambient AI scribe consent crisis. Signed, verifiable runtime evidence. Why no other governance tool produces it." />
+<title>The Evidence Gap · GoVTraceAI · Gobots</title>
+<meta name="description" content="An illustration of a signed runtime record for an ambient AI scribe consent event, and why logs are not evidence." />
 <meta property="og:title" content="The Evidence Gap · GoVTraceAI" />
-<meta property="og:description" content="Three health systems. One AI vendor. Thousands of patients recorded without consent. Not one organization can produce verifiable proof of what their AI actually did." />
+<meta property="og:description" content="Class actions against health systems allege patients were recorded by AI without consent. An illustration of what a signed, verifiable record of an AI action looks like." />
+<meta name="theme-color" content="#F2F2EE" />
+<link rel="icon" href="/favicon.svg" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          brand: '#D4532A',
-          'brand-hover': '#E5633A',
-          ink: '#E5E7EB',
-          'ink-dim': '#9CA3AF',
-          'ink-faint': '#6B7280',
-          'ink-ghost': '#4B5563',
-          safe: '#4ADE80',
-          danger: '#F87171',
-        },
-        fontFamily: {
-          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
-          mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
-        },
-      }
-    }
-  }
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
 
 <style>
-  html,body{background:#000;}
-  body{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;}
-  .headline{letter-spacing:-0.035em;font-weight:800;line-height:0.98;}
-  .section-label{letter-spacing:0.22em;font-size:11px;font-weight:600;}
-  .section-bar::before{content:"";display:block;width:36px;height:2px;background:#D4532A;margin-bottom:14px;}
-  .btn-solid{background:#D4532A;color:#fff;transition:background .15s;}
-  .btn-solid:hover{background:#E5633A;}
-  .btn-outline{border:1.5px solid #D4532A;color:#D4532A;transition:background .15s,color .15s;}
-  .btn-outline:hover{background:#D4532A;color:#fff;}
-  .panel{background:#0A0A0A;border:1px solid #1F2937;border-radius:14px;}
+  /* ── Tokens: the notarized-record system ─────────────────── */
+  :root{
+    color-scheme:light;
+    --paper:#F2F2EE;
+    --paper-2:#E9E9E3;
+    --paper-3:#FBFBF8;
+    --ink:#121212;
+    --ink-2:#4F4F49;
+    --ink-3:#6A6A63;
+    --rule:rgba(18,18,18,0.14);
+    --rule-strong:rgba(18,18,18,0.8);
+    --seal:#E0643A;
+    --seal-ink:#B4431F;
+    --safe:#1F6B45;
+    --warn:#9A6200;
+    --block:#B4231F;
+    --serif:'Source Serif 4',Georgia,serif;
+    --sans:'Archivo',system-ui,-apple-system,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,monospace;
+    --radius:3px;
+    --ease:cubic-bezier(0.16,1,0.3,1);
+  }
+
+  /* ── Base ────────────────────────────────────────────────── */
+  *,*::before,*::after{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:var(--sans);font-size:16px;line-height:1.55;
+    font-feature-settings:'ss01','cv11';
+    -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    text-rendering:optimizeLegibility;
+  }
+  h1,h2,h3,p,dl,dd,figure,pre{margin:0;}
+  h1,h2,h3{text-wrap:balance;}
+  p{text-wrap:pretty;}
+  a{color:inherit;text-underline-offset:0.22em;text-decoration-thickness:1px;}
+  img,svg{display:block;}
+  ::selection{background:var(--seal);color:#fff;}
+  :focus-visible{outline:2px solid var(--seal-ink);outline-offset:3px;border-radius:2px;}
+  .hidden{display:none !important;}
+  .tnum{font-variant-numeric:tabular-nums;}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+  .mono{font-family:var(--mono);}
+
+  .wrap{width:100%;max-width:78rem;margin:0 auto;padding:0 16px;}
+  @media(min-width:640px){.wrap{padding:0 24px;}}
+  @media(min-width:1024px){.wrap{padding:0 40px;}}
+
+  .display{font-family:var(--serif);font-variation-settings:'opsz' 60;font-weight:500;letter-spacing:-0.028em;line-height:0.98;}
+  .heading{font-family:var(--serif);font-variation-settings:'opsz' 48;font-weight:500;letter-spacing:-0.022em;line-height:1.06;}
+  .display em,.heading em{font-style:normal;color:var(--ink-2);}
+  .label{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;font-stretch:87.5%;}
+  .dot{color:var(--seal);}
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    border-radius:var(--radius);padding:12px 20px;
+    font-family:var(--sans);font-size:15px;font-weight:600;line-height:1.2;
+    text-decoration:none;cursor:pointer;border:0;white-space:nowrap;
+    transition:background-color .2s var(--ease),color .2s var(--ease),transform .2s var(--ease);
+  }
+  .btn:active{transform:translateY(1px);}
+  .btn-ink{background:var(--ink);color:var(--paper);box-shadow:0 1px 0 rgba(0,0,0,0.25),0 6px 16px -10px rgba(18,18,18,0.6);}
+  .btn-ink:hover{background:#2A2A27;}
+  .btn-rule{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule-strong);}
+  .btn-rule:hover{background:var(--ink);color:var(--paper);}
+  .btn-sm{padding:10px 16px;font-size:14px;}
+  .btn-lg{padding:14px 24px;}
+  .btns{display:flex;flex-wrap:wrap;gap:12px;}
+  @media(max-width:479px){.btns .btn{width:100%;}}
+
+  .link-ink{text-decoration:underline;text-decoration-color:rgba(18,18,18,0.3);transition:text-decoration-color .2s;}
+  .link-ink:hover{text-decoration-color:var(--seal);}
+
+  /* ── Site header ─────────────────────────────────────────── */
+  .site-head{border-bottom:1px solid var(--rule);background:var(--paper);}
+  .site-head .wrap{height:64px;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  .brand{display:flex;align-items:center;gap:12px;text-decoration:none;}
+  .wordmark{font-family:var(--serif);font-variation-settings:'opsz' 48;font-weight:500;letter-spacing:-0.022em;font-size:26px;line-height:1;}
+  .brand .label{display:none;border-left:1px solid var(--rule);padding-left:12px;font-size:11.5px;color:var(--ink-2);}
+  @media(min-width:640px){.brand .label{display:inline;}}
+  .head-actions{display:flex;align-items:center;gap:8px;}
+  .head-actions .btn-rule{display:none;}
+  @media(min-width:640px){.head-actions .btn-rule{display:inline-flex;}}
+
+  /* ── Hero ────────────────────────────────────────────────── */
+  .hero{padding:40px 0 64px;}
+  @media(min-width:768px){.hero{padding:56px 0 96px;}}
+  .running-head{border-bottom:1px solid var(--rule);padding-bottom:12px;font-size:13px;color:var(--ink-3);}
+  .hero-grid{margin-top:40px;display:grid;gap:56px;align-items:center;}
+  @media(min-width:1024px){.hero-grid{grid-template-columns:1.05fr 1fr;gap:64px;}}
+  .hero h1{font-size:clamp(3.1rem,8.2vw,5.5rem);}
+  .lead{margin-top:28px;max-width:36rem;font-size:19px;line-height:1.5;color:var(--ink-2);}
+  @media(min-width:768px){.lead{font-size:20px;}}
+  .lead strong{font-weight:500;color:var(--ink);}
+  .sublead{margin-top:16px;max-width:36rem;font-size:15.5px;line-height:1.6;color:var(--ink-3);}
+  .hero .btns{margin-top:36px;}
+  .byline{margin-top:40px;max-width:36rem;display:grid;grid-template-columns:auto 1fr;column-gap:16px;border-top:1px solid var(--rule);padding-top:18px;font-size:14px;line-height:1.6;}
+  .byline .label{padding-top:3px;font-size:11.5px;color:var(--ink-3);}
+  .byline p{color:var(--ink-2);}
+  .byline p + p{margin-top:4px;color:var(--ink-3);}
+  .byline strong{font-weight:600;color:var(--ink);}
+
+  /* Engine run log, set as a receipt slip */
+  .slip{
+    background:var(--paper-3);border:1px solid var(--rule);border-radius:var(--radius);
+    box-shadow:0 1px 0 rgba(18,18,18,0.04),0 2px 4px -2px rgba(18,18,18,0.10),0 32px 60px -40px rgba(18,18,18,0.5);
+    min-width:0;
+  }
+  .slip-band{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 20px;}
+  .slip-band.top{border-bottom:1px solid var(--rule-strong);}
+  .slip-band.bottom{border-top:1px solid var(--rule);font-family:var(--mono);font-size:11.5px;color:var(--ink-3);flex-wrap:wrap;}
+  .slip-band .label{font-size:11.5px;color:var(--ink-2);letter-spacing:0.12em;}
+  .live{display:inline-flex;align-items:center;gap:8px;color:var(--safe);}
+  .live .label{color:var(--safe);}
+  .pip{width:7px;height:7px;border-radius:50%;background:var(--safe);flex:none;}
   .verified-dot{animation:pulse 2s ease-in-out infinite;}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+  .log{list-style:none;margin:0;padding:16px 20px;font-family:var(--mono);font-size:12.5px;min-height:280px;}
+  .log li{display:grid;grid-template-columns:1.5rem 4.5rem minmax(0,1fr) auto;align-items:baseline;gap:12px;padding:7px 0;border-bottom:1px dashed rgba(18,18,18,0.12);}
+  .log li:last-child{border-bottom:0;}
+  .log .n{color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums;}
+  .log .stage{font-family:var(--sans);font-size:11.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;font-stretch:87.5%;color:var(--ink-3);}
+  .log .stage.gov{color:var(--seal-ink);}
+  .log .ev{color:var(--ink);overflow-wrap:anywhere;}
+  .log .st{font-weight:500;color:var(--ink-2);text-align:right;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;justify-content:flex-end;}
+  .log .st.bad{color:var(--block);}
+  .log .st.ok{color:var(--safe);}
+  @media(min-width:560px){.log .ev{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;overflow-wrap:normal;}}
+  @media(max-width:400px){.log{padding:14px 16px;}.log li{grid-template-columns:1.25rem 3.9rem minmax(0,1fr) auto;gap:8px;}.slip-band{padding:12px 16px;}}
+  .ok-text{color:var(--safe);display:inline-flex;align-items:center;gap:4px;}
+
   .fade-line{opacity:0;transform:translateY(4px);transition:opacity .35s ease-out,transform .35s ease-out;}
   .fade-line.is-visible{opacity:1;transform:translateY(0);}
-  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
-  .cursor-blink{animation:blink 1s steps(1) infinite;}
-  .logo-img{filter:brightness(1.08) contrast(1.04);}
-  pre{font-family:'JetBrains Mono',monospace;}
+
+  /* ── Sections ────────────────────────────────────────────── */
+  .sec{border-top:1px solid var(--rule-strong);padding:56px 0 72px;}
+  @media(min-width:768px){.sec{padding:72px 0 104px;}}
+  .sec-head{display:grid;gap:14px;}
+  @media(min-width:1024px){.sec-head{grid-template-columns:15rem minmax(0,1fr);gap:40px;}}
+  .sec-ref{display:flex;align-items:baseline;gap:10px;font-size:13.5px;line-height:1.4;color:var(--ink-3);}
+  @media(min-width:1024px){.sec-ref{flex-direction:column;gap:6px;padding-top:10px;}}
+  .sec-ref .num{font-family:var(--serif);font-variation-settings:'opsz' 24;font-size:15px;color:var(--ink-2);font-variant-numeric:tabular-nums;}
+  .sec h2{font-size:clamp(2.1rem,4.6vw,3.6rem);max-width:26ch;}
+  .sec-intro{margin-top:22px;max-width:65ch;font-size:17px;line-height:1.6;color:var(--ink-2);}
+  .sec-body{margin-top:48px;}
+  @media(min-width:1024px){.sec-body.indent{margin-left:calc(15rem + 40px);}}
+  .note{margin-top:20px;max-width:75ch;font-size:13px;line-height:1.6;color:var(--ink-3);}
+
+  /* §01 cases */
+  .cases{display:grid;border-top:1px solid var(--rule);}
+  .case{padding:28px 0;border-bottom:1px solid var(--rule);}
+  @media(min-width:768px){
+    .cases{grid-template-columns:repeat(3,minmax(0,1fr));}
+    .case{padding:32px 28px;border-bottom:0;border-left:1px solid var(--rule);}
+    .case:first-child{border-left:0;padding-left:0;}
+    .case:last-child{padding-right:0;}
+  }
+  .case .when{font-size:13px;color:var(--ink-3);font-variant-numeric:tabular-nums;}
+  .case h3{margin-top:12px;font-size:23px;line-height:1.15;}
+  .case p{margin-top:12px;font-size:15px;line-height:1.6;color:var(--ink-2);}
+
+  .stats{margin-top:40px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--rule-strong);}
+  .stat{padding:22px 16px 22px 0;border-bottom:1px solid var(--rule);}
+  .stat:nth-child(even){padding-left:16px;border-left:1px solid var(--rule);}
+  @media(min-width:768px){
+    .stats{grid-template-columns:repeat(4,minmax(0,1fr));}
+    .stat{padding:28px 24px;border-left:1px solid var(--rule);}
+    .stat:first-child{border-left:0;padding-left:0;}
+  }
+  .stat .fig{font-size:clamp(2.4rem,4.4vw,3.4rem);line-height:1;font-variant-numeric:tabular-nums lining-nums;}
+  .stat .fig.zero{color:var(--seal-ink);}
+  .stat p{margin-top:10px;font-size:14px;line-height:1.45;color:var(--ink-3);}
+
+  /* §02 gap items */
+  .gaps{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule);}
+  .gaps li{display:grid;grid-template-columns:2.5rem minmax(0,1fr);gap:12px;padding:26px 0;border-bottom:1px solid var(--rule);}
+  @media(min-width:768px){.gaps li{grid-template-columns:4rem minmax(0,1fr);gap:16px;}}
+  .gaps .n{font-family:var(--serif);font-size:20px;color:var(--ink-3);font-variant-numeric:tabular-nums;line-height:1.3;}
+  .gaps h3{font-size:clamp(1.3rem,2.2vw,1.6rem);line-height:1.22;max-width:40ch;}
+  .gaps p{margin-top:10px;max-width:68ch;font-size:15.5px;line-height:1.6;color:var(--ink-2);}
+  .statement{margin-top:40px;border-top:1px solid var(--rule-strong);border-bottom:1px solid var(--rule-strong);padding:26px 0;}
+  .statement p{max-width:68ch;font-size:18px;line-height:1.6;color:var(--ink-2);}
+  .statement strong{font-weight:600;color:var(--ink);}
+
+  /* §03 the record */
+  .record{background:var(--paper-3);border:1px solid var(--rule);border-radius:var(--radius);overflow:hidden;
+    box-shadow:0 1px 0 rgba(18,18,18,0.04),0 32px 60px -44px rgba(18,18,18,0.5);}
+  .record .slip-band.top .mono{font-size:11.5px;color:var(--ink-3);}
+  .record .title{display:flex;align-items:center;gap:10px;min-width:0;}
+  .code{
+    margin:0;background:var(--paper-2);border-bottom:1px solid var(--rule);
+    padding:20px;overflow-x:auto;
+    font-family:var(--mono);font-size:12.5px;line-height:1.7;color:var(--ink);white-space:pre;
+    tab-size:2;
+  }
+  @media(min-width:768px){.code{font-size:13px;padding:24px 28px;}}
+  .code .k{color:var(--seal-ink);}
+  .code .p{color:var(--ink-3);}
+  .code .bad{color:var(--block);font-weight:500;}
+  .code .good{color:var(--safe);font-weight:500;}
+  .code .dim{color:var(--ink-2);}
+  .record .slip-band.bottom{border-top:0;}
+  .chain{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .chain .to{color:var(--seal-ink);}
+
+  /* §04 verify */
+  .verify-slip{background:var(--paper-3);border:1px solid var(--rule);border-radius:var(--radius);padding:24px 20px;}
+  @media(min-width:768px){.verify-slip{padding:32px;}}
+  .field-label{display:block;margin-bottom:10px;font-size:11.5px;color:var(--ink-3);}
+  .verify-row{display:flex;flex-direction:column;gap:12px;}
+  @media(min-width:768px){.verify-row{flex-direction:row;}}
+  .verify-row input{
+    flex:1;min-width:0;width:100%;
+    background:var(--paper);color:var(--ink);caret-color:var(--seal);
+    border:1px solid rgba(18,18,18,0.35);border-radius:var(--radius);
+    padding:13px 16px;font-family:var(--mono);font-size:14px;
+    transition:border-color .2s;
+  }
+  .verify-row input:hover{border-color:var(--rule-strong);}
+  .verify-row input:focus{outline:none;border-color:var(--ink);}
+  .verify-row input:focus-visible{outline:2px solid var(--seal-ink);outline-offset:2px;}
+  .verify-row .btn{padding:13px 32px;}
+  #verifyResult{margin-top:24px;}
+  .pending{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);overflow-wrap:anywhere;}
+  .result{border-top:1px solid var(--rule-strong);padding-top:18px;}
+  .result-title{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:700;letter-spacing:0.06em;font-stretch:87.5%;}
+  .result-ok .result-title{color:var(--safe);}
+  .result-bad .result-title{color:var(--block);}
+  .kv{margin-top:14px;display:grid;gap:0 32px;font-family:var(--mono);font-size:12.5px;}
+  @media(min-width:768px){.kv{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  .kv div{display:grid;grid-template-columns:7.5rem minmax(0,1fr);gap:8px;padding:7px 0;border-bottom:1px solid var(--rule);}
+  .kv dt{color:var(--ink-3);}
+  .kv dd{color:var(--ink);overflow-wrap:anywhere;}
+  .kv dd.v{color:var(--block);font-weight:500;}
+  .result-bad p{margin-top:10px;font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--ink-2);}
+  .result-bad p span{color:var(--ink);}
+
+  /* §05 compare */
+  .compare{display:grid;border-top:1px solid var(--rule);}
+  .tool{padding:28px 0;border-bottom:1px solid var(--rule);}
+  @media(min-width:768px){
+    .compare{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .tool:nth-child(odd){padding-right:40px;}
+    .tool:nth-child(even){padding-left:40px;border-left:1px solid var(--rule);}
+  }
+  .tool .cat{font-size:13px;color:var(--ink-3);}
+  .tool h3{margin-top:10px;font-size:23px;line-height:1.15;}
+  .tool p{margin-top:10px;max-width:56ch;font-size:15px;line-height:1.6;color:var(--ink-2);}
+  .ours{margin-top:40px;border-top:3px double var(--rule-strong);padding-top:26px;display:grid;gap:12px;}
+  @media(min-width:1024px){.ours{grid-template-columns:15rem minmax(0,1fr);gap:40px;}}
+  .ours .cat{font-size:13.5px;font-weight:600;color:var(--seal-ink);padding-top:6px;}
+  .ours h3{font-size:clamp(1.6rem,2.8vw,2.2rem);line-height:1.12;}
+  .ours p{margin-top:12px;max-width:65ch;font-size:16.5px;line-height:1.6;color:var(--ink);}
+
+  /* §06 CTA */
+  .cta .sec-intro{font-size:18px;}
+  .cta .btns{margin-top:36px;}
+
+  /* ── Footer ──────────────────────────────────────────────── */
+  .site-foot{background:var(--ink);color:var(--paper);}
+  .site-foot .wrap{display:flex;flex-direction:column;gap:20px;padding-top:36px;padding-bottom:36px;}
+  @media(min-width:768px){.site-foot .wrap{flex-direction:row;align-items:center;justify-content:space-between;}}
+  .site-foot .brand{gap:14px;}
+  .site-foot .wordmark{font-size:24px;}
+  .site-foot .tag{font-size:13px;color:rgba(242,242,238,0.6);}
+  .site-foot nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 24px;}
+  .site-foot nav a{font-size:14px;color:rgba(242,242,238,0.75);text-decoration:none;transition:color .2s;}
+  .site-foot nav a:hover{color:var(--paper);}
+  .site-foot .legal{font-size:12.5px;color:rgba(242,242,238,0.6);font-variant-numeric:tabular-nums;}
+  .site-foot :focus-visible{outline-color:var(--seal);}
+
+  @media(prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    .verified-dot{animation:none;}
+    .fade-line{opacity:1;transform:none;transition:none;}
+    .btn{transition:none;}
+  }
+  .stop{color:var(--seal);}
 </style>
 </head>
-<body class="text-ink">
+<body>
 
-<!-- NAV -->
-<header class="border-b border-white/5">
-  <div class="max-w-[1280px] mx-auto px-6 md:px-8 h-20 md:h-24 flex items-center justify-between gap-4">
-    <a href="/" class="flex items-center gap-6 shrink-0">
-      <img src="/gobots-logo.png" alt="gobots.ai" class="h-10 md:h-12 w-auto logo-img" />
-      <span class="hidden lg:inline text-ink-dim text-[11px] tracking-[0.28em] font-semibold uppercase">AI Execution Co.</span>
+<!-- HEADER -->
+<header class="site-head">
+  <div class="wrap">
+    <a href="/" class="brand" aria-label="gobots home">
+      <span class="wordmark">gobots<span class="dot">.</span></span>
+      <span class="label">Full-stack AI company</span>
     </a>
-    <div class="flex items-center gap-2 md:gap-3">
-      <a href="#verify" class="hidden sm:inline-flex btn-outline rounded-md px-4 md:px-5 py-2.5 text-sm font-semibold">Verify a Receipt</a>
-      <a href="/walkthrough" class="btn-solid rounded-md px-4 md:px-5 py-2.5 text-xs md:text-sm font-semibold whitespace-nowrap">Request a Walkthrough</a>
+    <div class="head-actions">
+      <a href="#verify" class="btn btn-rule btn-sm">Verify a Receipt</a>
+      <a href="/walkthrough" class="btn btn-ink btn-sm">Book a GoVTraceAI briefing</a>
     </div>
   </div>
 </header>
 
+<main>
+
 <!-- HERO -->
-<section class="relative overflow-hidden">
-  <div class="max-w-[1280px] mx-auto px-8 pt-24 pb-20 grid lg:grid-cols-[1.05fr_1fr] gap-16 items-center">
-    <div>
-      <div class="section-bar section-label uppercase text-brand">GoVTraceAI · Evidence Artifact №001</div>
-      <h1 class="headline text-white text-[56px] md:text-[76px] mt-8">
-        The evidence <br/>
-        <span class="text-brand">gap.</span>
-      </h1>
-      <p class="mt-8 text-ink-dim text-lg leading-[1.55] max-w-xl">
-        Three health systems. One AI vendor. <span class="text-white">Thousands of patients recorded without consent.</span> Not one organization can produce verifiable proof of what their AI actually did.
-      </p>
-      <p class="mt-5 text-ink-faint text-[15px] leading-[1.55] max-w-xl">
-        This page is a counterfactual audit artifact, generated by the GoVTraceAI runtime engine against the scenario class now driving class-action litigation. Cryptographically signed. Independently verifiable.
-      </p>
+<section class="hero">
+  <div class="wrap">
+    <p class="running-head">GoVTraceAI · Evidence Artifact №001</p>
+    <div class="hero-grid">
+      <div>
+        <h1 class="display">
+          The evidence <br/>
+          <em>gap</em><span class="dot">.</span>
+        </h1>
+        <p class="lead">
+          Class actions allege that <strong>thousands of patients were recorded by ambient AI without consent.</strong> Whatever a court decides, an organization needs to be able to show what its AI actually did.
+        </p>
+        <p class="sublead">
+          <strong>This page is an illustration.</strong> It reconstructs one scenario from public reporting, with synthetic identifiers and a sample receipt. It was not issued by the live engine, and nothing below is a live verification. To verify a real engine-signed receipt, use <a href="/verify">the verify page</a>.
+        </p>
 
-      <div class="mt-10 flex flex-wrap gap-3">
-        <a href="#receipt" class="btn-solid rounded-md px-6 py-3.5 text-sm font-semibold inline-flex items-center gap-2">
-          See the signed receipt →
-        </a>
-        <a href="#verify" class="btn-outline rounded-md px-6 py-3.5 text-sm font-semibold">Verify it yourself</a>
+        <div class="btns">
+          <a href="#receipt" class="btn btn-ink btn-lg">
+            See the illustrative receipt
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9.5M7.5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+          </a>
+          <a href="/verify" class="btn btn-rule btn-lg">Verify a real receipt</a>
+        </div>
+
+        <div class="byline">
+          <span class="label">Author</span>
+          <div>
+            <p><strong>Anand Parankussam</strong> · Enterprise AI &amp; Automation Leader (ex-IBM, UWM, Adient)</p>
+            <p>Governance systems deployed across fintech, mortgage, automotive, manufacturing, banking, insurance, and other regulated sectors.</p>
+          </div>
+        </div>
       </div>
 
-      <div class="mt-10 pt-8 border-t border-white/5 max-w-xl">
-        <div class="text-white font-semibold text-sm">Anand Parankussam <span class="text-ink-faint font-normal">· Enterprise AI &amp; Automation Leader (ex-IBM, UWM, Adient)</span></div>
-        <div class="text-ink-faint text-sm mt-1 leading-[1.55]">Governance systems deployed across fintech, mortgage, automotive, manufacturing, banking, insurance, and other regulated sectors.</div>
-      </div>
-    </div>
-
-    <!-- Terminal panel -->
-    <div class="panel shadow-2xl">
-      <div class="flex items-center justify-between px-5 py-3 border-b border-white/5">
-        <div class="flex items-center gap-1.5">
-          <span class="w-3 h-3 rounded-full bg-[#1F2937]"></span>
-          <span class="w-3 h-3 rounded-full bg-[#1F2937]"></span>
-          <span class="w-3 h-3 rounded-full bg-[#1F2937]"></span>
+      <!-- Engine run log -->
+      <figure class="slip" aria-label="GoVTrace engine run log">
+        <div class="slip-band top">
+          <span class="label">Illustrative engine run log</span>
+          <span class="live"><span class="pip verified-dot" aria-hidden="true"></span><span class="label">Illustration</span></span>
         </div>
-        <div class="font-mono text-[11px] tracking-[0.2em] text-ink-faint uppercase">GoVTrace Engine · v2.1.0</div>
-        <div class="flex items-center gap-2">
-          <span class="w-1.5 h-1.5 rounded-full bg-safe verified-dot"></span>
-          <span class="font-mono text-[11px] tracking-[0.15em] text-safe uppercase">Live</span>
+        <ol class="log">
+          <li class="fade-line">
+            <span class="n">01</span>
+            <span class="stage">Input</span>
+            <span class="ev">ambient_scribe.session_start</span>
+            <span class="st">captured</span>
+          </li>
+          <li class="fade-line">
+            <span class="n">02</span>
+            <span class="stage">Context</span>
+            <span class="ev">Jurisdiction resolved · US-CA</span>
+            <span class="st">all-party</span>
+          </li>
+          <li class="fade-line">
+            <span class="n">03</span>
+            <span class="stage gov">Govern</span>
+            <span class="ev">CIPA §632.7 consent artifact</span>
+            <span class="st bad">MISSING</span>
+          </li>
+          <li class="fade-line">
+            <span class="n">04</span>
+            <span class="stage gov">Govern</span>
+            <span class="ev">CMIA §56.101 authorization</span>
+            <span class="st bad">MISSING</span>
+          </li>
+          <li class="fade-line">
+            <span class="n">05</span>
+            <span class="stage gov">Decide</span>
+            <span class="ev">Verdict rendered</span>
+            <span class="st bad">BLOCK</span>
+          </li>
+          <li class="fade-line">
+            <span class="n">06</span>
+            <span class="stage">Sign</span>
+            <span class="ev">Ed25519 · chain committed</span>
+            <span class="st ok">SAFE <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg></span>
+          </li>
+          <li class="fade-line">
+            <span class="n">07</span>
+            <span class="stage">Output</span>
+            <span class="ev">DoCR · docr_2d7f…6f03</span>
+            <span class="st">done · 142ms</span>
+          </li>
+        </ol>
+        <div class="slip-band bottom">
+          <span>govtrace-engine · governed</span>
+          <span>7/7 steps · <span class="ok-text"><svg width="11" height="11" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>complete</span></span>
         </div>
-      </div>
-      <div class="px-5 py-5 font-mono text-[12.5px] space-y-2.5 min-h-[280px]">
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">01</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Input</span>
-          <span class="text-ink flex-1 truncate">ambient_scribe.session_start</span>
-          <span class="shrink-0 font-semibold text-ink-dim">captured</span>
-        </div>
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">02</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Context</span>
-          <span class="text-ink flex-1 truncate">Jurisdiction resolved · US-CA</span>
-          <span class="shrink-0 font-semibold text-ink-dim">all-party</span>
-        </div>
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">03</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-brand">Govern</span>
-          <span class="text-ink flex-1 truncate">CIPA §632.7 consent artifact</span>
-          <span class="shrink-0 font-semibold text-danger">MISSING</span>
-        </div>
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">04</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-brand">Govern</span>
-          <span class="text-ink flex-1 truncate">CMIA §56.101 authorization</span>
-          <span class="shrink-0 font-semibold text-danger">MISSING</span>
-        </div>
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">05</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-brand">Decide</span>
-          <span class="text-ink flex-1 truncate">Verdict rendered</span>
-          <span class="shrink-0 font-semibold text-danger">BLOCK</span>
-        </div>
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">06</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Sign</span>
-          <span class="text-ink flex-1 truncate">Ed25519 · chain committed</span>
-          <span class="shrink-0 font-semibold text-safe">SAFE ✓</span>
-        </div>
-        <div class="flex items-center gap-3 leading-none fade-line">
-          <span class="text-ink-ghost w-5 text-right shrink-0 tabular-nums">07</span>
-          <span class="text-[10px] font-bold tracking-widest w-[70px] shrink-0 uppercase text-ink-faint">Output</span>
-          <span class="text-ink flex-1 truncate">DoCR · docr_2d7f…6f03</span>
-          <span class="shrink-0 font-semibold text-ink-dim">done · 142ms</span>
-        </div>
-      </div>
-      <div class="flex items-center justify-between px-5 py-3 border-t border-white/5 text-[11px] font-mono">
-        <span class="text-ink-faint">govtrace-engine · governed</span>
-        <span class="text-ink-dim">7/7 steps · <span class="text-safe">✓ complete</span></span>
-      </div>
+      </figure>
     </div>
   </div>
 </section>
 
 <!-- INCIDENT CONTEXT -->
-<section class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-20">
-    <div class="section-bar section-label uppercase text-brand">§01 · What Public Reporting Tells Us</div>
-    <h2 class="headline text-white text-[40px] md:text-[52px] mt-6 max-w-3xl">
-      The scenario class: <span class="text-brand">ambient AI consent failures.</span>
-    </h2>
-
-    <div class="mt-14 grid md:grid-cols-3 gap-4">
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-brand uppercase mb-4">Nov 2025 · San Diego Superior Court</div>
-        <div class="text-white font-semibold text-lg mb-3">Saucedo v. Sharp HealthCare</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Class action alleges ambient AI recorded a July 2025 patient visit without consent. EHR notes reportedly contained boilerplate language stating the patient had been "advised" and "consented." Per the complaint, no such consent occurred.</p>
-      </div>
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-brand uppercase mb-4">Apr 2026 · N.D. California</div>
-        <div class="text-white font-semibold text-lg mb-3">Sutter Health &amp; MemorialCare</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Proposed nationwide class covering patients over the prior two years. Alleges clinicians "intercepted, recorded, and processed" audio without informed consent. Same ambient documentation category as the Sharp matter.</p>
-      </div>
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-brand uppercase mb-4">2026 · Multi-State Exposure</div>
-        <div class="text-white font-semibold text-lg mb-3">13 all-party consent states</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Florida F.S. §934.03 makes unconsented recording a third-degree felony, up to five years. A single ambient scribe workflow can be compliant in one state and criminal in another.</p>
-      </div>
+<section class="sec" aria-labelledby="s01">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-ref"><span class="num">§01</span><span>What Public Reporting Tells Us</span></p>
+      <h2 id="s01" class="heading">The scenario class: <em>ambient AI consent failures</em><span class="stop">.</span></h2>
     </div>
 
-    <div class="mt-10 grid md:grid-cols-4 gap-4">
-      <div class="panel p-6">
-        <div class="headline text-white text-4xl">250+</div>
-        <div class="text-ink-faint text-sm mt-2">Health systems deployed</div>
+    <div class="sec-body">
+      <div class="cases">
+        <article class="case">
+          <p class="when">Nov 2025 · San Diego Superior Court</p>
+          <h3 class="heading">Saucedo v. Sharp HealthCare</h3>
+          <p>Class action alleges ambient AI recorded a July 2025 patient visit without consent. EHR notes reportedly contained boilerplate language stating the patient had been "advised" and "consented." Per the complaint, no such consent occurred.</p>
+        </article>
+        <article class="case">
+          <p class="when">Apr 2026 · N.D. California</p>
+          <h3 class="heading">Sutter Health &amp; MemorialCare</h3>
+          <p>Proposed nationwide class covering patients over the prior two years. Alleges clinicians "intercepted, recorded, and processed" audio without informed consent. Same ambient documentation category as the Sharp matter.</p>
+        </article>
+        <article class="case">
+          <p class="when">2026 · Multi-State Exposure</p>
+          <h3 class="heading">13 all-party consent states</h3>
+          <p>Florida F.S. §934.03 makes unconsented recording a third-degree felony, up to five years. A single ambient scribe workflow can be lawful in one state and criminal in another.</p>
+        </article>
       </div>
-      <div class="panel p-6">
-        <div class="headline text-white text-4xl">100K+</div>
-        <div class="text-ink-faint text-sm mt-2">Patients in alleged class</div>
-      </div>
-      <div class="panel p-6">
-        <div class="headline text-white text-4xl">$5K</div>
-        <div class="text-ink-faint text-sm mt-2">CIPA damages · per violation</div>
-      </div>
-      <div class="panel p-6">
-        <div class="headline text-brand text-4xl">0</div>
-        <div class="text-ink-faint text-sm mt-2">Defendants with signed runtime receipts</div>
-      </div>
-    </div>
 
-    <div class="mt-8 text-xs text-ink-faint leading-relaxed">
-      Sources: Medscape (Jan 16 &amp; Apr 16, 2026); Becker's Hospital Review (Dec 18, 2025); Fisher Phillips (Dec 9, 2025); ABA Health Law (Feb 10, 2026); HealthLaw Attorney Blog (Feb 23, 2026).
+      <div class="stats">
+        <div class="stat">
+          <div class="heading fig">250+</div>
+          <p>Health systems reported to use the vendor's ambient AI</p>
+        </div>
+        <div class="stat">
+          <div class="heading fig">100K+</div>
+          <p>Patients in the alleged class</p>
+        </div>
+        <div class="stat">
+          <div class="heading fig">$5K</div>
+          <p>CIPA damages · per violation</p>
+        </div>
+        <div class="stat">
+          <div class="heading fig">5 yrs</div>
+          <p>Maximum prison term under Florida F.S. §934.03 (third-degree felony)</p>
+        </div>
+      </div>
+
+      <p class="note">
+        Sources: Medscape (Jan 16 &amp; Apr 16, 2026); Becker's Hospital Review (Dec 18, 2025); Fisher Phillips (Dec 9, 2025); ABA Health Law (Feb 10, 2026); HealthLaw Attorney Blog (Feb 23, 2026).
+      </p>
     </div>
   </div>
 </section>
 
 <!-- THE GAP -->
-<section class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-20">
-    <div class="section-bar section-label uppercase text-brand">§02 · The Evidence Gap</div>
-    <h2 class="headline text-white text-[40px] md:text-[52px] mt-6 max-w-3xl">
-      What <span class="text-brand">no health system</span> in these cases can produce.
-    </h2>
-
-    <div class="mt-12 space-y-4">
-      <div class="panel p-6 flex gap-5 items-start">
-        <div class="font-mono text-brand text-lg shrink-0 mt-0.5">01</div>
-        <div>
-          <div class="text-white font-semibold text-lg">A signed, tamper-evident record that consent was captured <span class="text-brand">before</span> recording began.</div>
-          <p class="text-sm text-ink-dim mt-2 leading-[1.6]">Not a chart note. Not a checkbox. A cryptographically signed event with timestamp, clinician ID, policy version, and patient ID. Produced at runtime, independently verifiable years later.</p>
-        </div>
-      </div>
-      <div class="panel p-6 flex gap-5 items-start">
-        <div class="font-mono text-brand text-lg shrink-0 mt-0.5">02</div>
-        <div>
-          <div class="text-white font-semibold text-lg">Proof that <span class="text-brand">jurisdiction-aware policy</span> was enforced at the moment of decision.</div>
-          <p class="text-sm text-ink-dim mt-2 leading-[1.6]">All-party consent in CA, FL, and 11 other states. Standard HIPAA elsewhere. The same ambient workflow deployed nationwide cannot self-attest which policy governed which visit on which date.</p>
-        </div>
-      </div>
-      <div class="panel p-6 flex gap-5 items-start">
-        <div class="font-mono text-brand text-lg shrink-0 mt-0.5">03</div>
-        <div>
-          <div class="text-white font-semibold text-lg">An audit chain that <span class="text-brand">cannot be rewritten</span> after the fact.</div>
-          <p class="text-sm text-ink-dim mt-2 leading-[1.6]">EHR notes can be edited. Vendor logs are controlled by the vendor. Neither produces admissible evidence when the consent workflow itself is the defendant.</p>
-        </div>
-      </div>
+<section class="sec" aria-labelledby="s02">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-ref"><span class="num">§02</span><span>The Evidence Gap</span></p>
+      <h2 id="s02" class="heading">What <em>a court may ask</em> these systems to produce<span class="stop">.</span></h2>
     </div>
 
-    <div class="mt-10 panel p-6" style="border-color:rgba(212,83,42,0.3)">
-      <div class="text-sm text-ink leading-[1.7]">This is not a detection problem. DLP catches data leaving. GRC platforms score posture. AI governance dashboards observe behavior. <span class="text-white font-semibold">None of them produce a signed runtime receipt for a consent event.</span> They were not designed to.</div>
+    <div class="sec-body indent">
+      <ol class="gaps">
+        <li>
+          <span class="n">01</span>
+          <div>
+            <h3 class="heading">A signed, tamper-evident record that consent was captured <em>before</em> recording began.</h3>
+            <p>Not a chart note. Not a checkbox. A cryptographically signed event with timestamp, clinician ID, policy version, and patient ID. Produced at runtime, independently verifiable without contacting the issuer.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">02</span>
+          <div>
+            <h3 class="heading">Proof that <em>jurisdiction-aware policy</em> was enforced at the moment of decision.</h3>
+            <p>All-party consent in CA, FL, and 11 other states. Standard HIPAA elsewhere. The same ambient workflow deployed nationwide cannot self-attest which policy governed which visit on which date.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n">03</span>
+          <div>
+            <h3 class="heading">An audit chain that <em>cannot be rewritten</em> after the fact.</h3>
+            <p>EHR notes can be edited. Vendor logs are controlled by the vendor. Neither may count as independent evidence when the consent workflow itself is the defendant.</p>
+          </div>
+        </li>
+      </ol>
+
+      <div class="statement">
+        <p>This is not a detection problem. DLP catches data leaving. GRC platforms score posture. AI governance dashboards observe behavior. <strong>They are not designed to produce a signed runtime receipt for a consent event.</strong></p>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- THE RECEIPT -->
-<section id="receipt" class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-20">
-    <div class="section-bar section-label uppercase text-brand">§03 · The Counterfactual Artifact</div>
-    <h2 class="headline text-white text-[40px] md:text-[52px] mt-6 max-w-3xl">
-      The Duty-of-Care Record <br/>
-      <span class="text-brand">GoVTraceAI would have generated.</span>
-    </h2>
-    <p class="mt-6 text-ink-dim text-[15px] max-w-2xl leading-[1.6]">
-      Generated at runtime by the GoVTraceAI engine against a reconstructed scenario matching the cited complaints. Ed25519 signed. Hash-chained. Verifiable below.
-    </p>
-
-    <div class="mt-12 panel overflow-hidden shadow-2xl">
-      <div class="flex items-center justify-between px-5 py-3 border-b border-white/5">
-        <div class="flex items-center gap-3">
-          <div class="w-2 h-2 rounded-full bg-safe verified-dot"></div>
-          <div class="font-mono text-[11px] tracking-[0.2em] text-ink-dim uppercase">DoCR · Duty-of-Care Record</div>
-        </div>
-        <div class="font-mono text-[11px] text-ink-faint">v1 · Ed25519</div>
-      </div>
-
-      <div class="p-6 overflow-x-auto">
-<pre class="text-[13px] text-ink leading-[1.65] whitespace-pre-wrap"><span class="text-ink-faint">{</span>
-  <span class="text-brand">"docr_id"</span>: <span class="text-ink">"docr_2d7f8a1c4b9e6f03"</span>,
-  <span class="text-brand">"issued_at"</span>: <span class="text-ink">"2025-07-14T10:42:03.812Z"</span>,
-  <span class="text-brand">"policy_version"</span>: <span class="text-ink">"hipaa-cipa-v3.1.0"</span>,
-  <span class="text-brand">"jurisdiction"</span>: <span class="text-ink">"US-CA"</span>,
-  <span class="text-brand">"decision"</span>: {
-    <span class="text-brand">"verdict"</span>: <span class="text-danger">"POLICY_VIOLATION"</span>,
-    <span class="text-brand">"reason"</span>: <span class="text-ink">"AMBIENT_AUDIO_CAPTURE_WITHOUT_CONSENT_ARTIFACT"</span>,
-    <span class="text-brand">"enforced"</span>: <span class="text-danger">"BLOCK"</span>
-  },
-  <span class="text-brand">"context"</span>: {
-    <span class="text-brand">"event_type"</span>: <span class="text-ink">"ambient_scribe.session_start"</span>,
-    <span class="text-brand">"encounter_id"</span>: <span class="text-ink">"enc_7f12ab90"</span>,
-    <span class="text-brand">"clinician_id"</span>: <span class="text-ink">"clin_b84cde21"</span>,
-    <span class="text-brand">"patient_id_hash"</span>: <span class="text-ink">"sha256:c8a2…7d1f"</span>,
-    <span class="text-brand">"vendor"</span>: <span class="text-ink">"ambient_documentation_platform"</span>,
-    <span class="text-brand">"data_destination"</span>: <span class="text-ink">"vendor_cloud_us-west-2"</span>
-  },
-  <span class="text-brand">"policy_checks"</span>: [
-    { <span class="text-brand">"id"</span>: <span class="text-ink">"CIPA-632.7"</span>,       <span class="text-brand">"status"</span>: <span class="text-danger">"FAIL"</span>, <span class="text-brand">"note"</span>: <span class="text-ink-dim">"No signed consent artifact within 120s window."</span> },
-    { <span class="text-brand">"id"</span>: <span class="text-ink">"CMIA-56.101"</span>,      <span class="text-brand">"status"</span>: <span class="text-danger">"FAIL"</span>, <span class="text-brand">"note"</span>: <span class="text-ink-dim">"Audio transmission to third party without authorization."</span> },
-    { <span class="text-brand">"id"</span>: <span class="text-ink">"HIPAA-164.508"</span>,    <span class="text-brand">"status"</span>: <span class="text-danger">"FAIL"</span>, <span class="text-brand">"note"</span>: <span class="text-ink-dim">"No valid authorization for disclosure to BA."</span> },
-    { <span class="text-brand">"id"</span>: <span class="text-ink">"AB-3030-DISCLOSE"</span>, <span class="text-brand">"status"</span>: <span class="text-safe">"PASS"</span>, <span class="text-brand">"note"</span>: <span class="text-ink-dim">"Disclaimer template present downstream."</span> }
-  ],
-  <span class="text-brand">"provenance"</span>: {
-    <span class="text-brand">"model_version"</span>: <span class="text-ink">"scribe-ambient-4.2.1"</span>,
-    <span class="text-brand">"prompt_hash"</span>:   <span class="text-ink">"sha256:1a3c…9e22"</span>,
-    <span class="text-brand">"input_hash"</span>:    <span class="text-ink">"sha256:7b5d…02af"</span>,
-    <span class="text-brand">"prior_docr"</span>:    <span class="text-ink">"docr_6e11ff02aa3d91bc"</span>
-  },
-  <span class="text-brand">"signature"</span>: {
-    <span class="text-brand">"alg"</span>:        <span class="text-ink">"Ed25519"</span>,
-    <span class="text-brand">"kid"</span>:        <span class="text-ink">"govtrace-issuer-prod-04"</span>,
-    <span class="text-brand">"sig"</span>:        <span class="text-ink">"MEUCIQD9k8…Qm1Rf3Lq7vN2pJ=="</span>,
-    <span class="text-brand">"chain_root"</span>: <span class="text-ink">"sha256:4f0a…bd83"</span>
-  }
-<span class="text-ink-faint">}</span></pre>
-      </div>
-
-      <div class="flex items-center justify-between px-5 py-3 border-t border-white/5 text-[11px] font-mono">
-        <span class="text-ink-faint">chain: docr_6e11…91bc → <span class="text-brand">docr_2d7f…6f03</span></span>
-        <span class="text-safe">● SIGNATURE VALID</span>
+<section id="receipt" class="sec" aria-labelledby="s03">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-ref"><span class="num">§03</span><span>The Counterfactual Artifact</span></p>
+      <div>
+        <h2 id="s03" class="heading">The Duty-of-Care Record <br/><em>GoVTraceAI would have generated</em><span class="stop">.</span></h2>
+        <p class="sec-intro">
+          An illustration of the record GoVTraceAI is designed to issue, built on a reconstructed scenario matching the cited complaints. The values below are synthetic.
+        </p>
       </div>
     </div>
 
-    <div class="mt-4 text-xs text-ink-faint">
-      Scenario reconstructed from publicly reported complaints. Identifiers synthetic. Receipt structure, signing, and verification produced by the GoVTraceAI engine.
+    <div class="sec-body">
+      <figure class="record" aria-label="DoCR · Duty-of-Care Record">
+        <div class="slip-band top">
+          <div class="title">
+            <span class="pip verified-dot" aria-hidden="true"></span>
+            <span class="label">DoCR · Duty-of-Care Record</span>
+          </div>
+          <span class="mono">v1 · Ed25519</span>
+        </div>
+
+<pre class="code" tabindex="0"><span class="p">{</span>
+  <span class="k">"docr_id"</span>: "docr_2d7f8a1c4b9e6f03",
+  <span class="k">"issued_at"</span>: "2025-07-14T10:42:03.812Z",
+  <span class="k">"policy_version"</span>: "hipaa-cipa-v3.1.0",
+  <span class="k">"jurisdiction"</span>: "US-CA",
+  <span class="k">"decision"</span>: {
+    <span class="k">"verdict"</span>: <span class="bad">"POLICY_VIOLATION"</span>,
+    <span class="k">"reason"</span>: "AMBIENT_AUDIO_CAPTURE_WITHOUT_CONSENT_ARTIFACT",
+    <span class="k">"enforced"</span>: <span class="bad">"BLOCK"</span>
+  },
+  <span class="k">"context"</span>: {
+    <span class="k">"event_type"</span>: "ambient_scribe.session_start",
+    <span class="k">"encounter_id"</span>: "enc_7f12ab90",
+    <span class="k">"clinician_id"</span>: "clin_b84cde21",
+    <span class="k">"patient_id_hash"</span>: "sha256:c8a2…7d1f",
+    <span class="k">"vendor"</span>: "ambient_documentation_platform",
+    <span class="k">"data_destination"</span>: "vendor_cloud_us-west-2"
+  },
+  <span class="k">"policy_checks"</span>: [
+    { <span class="k">"id"</span>: "CIPA-632.7",       <span class="k">"status"</span>: <span class="bad">"FAIL"</span>, <span class="k">"note"</span>: <span class="dim">"No signed consent artifact within 120s window."</span> },
+    { <span class="k">"id"</span>: "CMIA-56.101",      <span class="k">"status"</span>: <span class="bad">"FAIL"</span>, <span class="k">"note"</span>: <span class="dim">"Audio transmission to third party without authorization."</span> },
+    { <span class="k">"id"</span>: "HIPAA-164.508",    <span class="k">"status"</span>: <span class="bad">"FAIL"</span>, <span class="k">"note"</span>: <span class="dim">"No valid authorization for disclosure to BA."</span> },
+    { <span class="k">"id"</span>: "AB-3030-DISCLOSE", <span class="k">"status"</span>: <span class="good">"PASS"</span>, <span class="k">"note"</span>: <span class="dim">"Disclaimer template present downstream."</span> }
+  ],
+  <span class="k">"provenance"</span>: {
+    <span class="k">"model_version"</span>: "scribe-ambient-4.2.1",
+    <span class="k">"prompt_hash"</span>:   "sha256:1a3c…9e22",
+    <span class="k">"input_hash"</span>:    "sha256:7b5d…02af",
+    <span class="k">"prior_docr"</span>:    "docr_6e11ff02aa3d91bc"
+  },
+  <span class="k">"signature"</span>: {
+    <span class="k">"alg"</span>:        "Ed25519",
+    <span class="k">"kid"</span>:        "govtrace-issuer-prod-04",
+    <span class="k">"sig"</span>:        "MEUCIQD9k8…Qm1Rf3Lq7vN2pJ==",
+    <span class="k">"chain_root"</span>: "sha256:4f0a…bd83"
+  }
+<span class="p">}</span></pre>
+
+        <div class="slip-band bottom">
+          <span class="chain">chain: docr_6e11…91bc <svg width="12" height="12" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9.5M7.5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg><span class="sr-only">to</span> <span class="to">docr_2d7f…6f03</span></span>
+          <span class="live"><span class="pip" aria-hidden="true"></span>ILLUSTRATIVE SIGNATURE</span>
+        </div>
+      </figure>
+
+      <p class="note">
+        Scenario reconstructed from publicly reported complaints. Identifiers, hashes and the signature are synthetic. The structure follows the GoVTrace Receipt format; this exact receipt was not signed by the engine. The Duty-of-Care Record is signed as a GoVTrace Receipt (<a href="/spec">format spec</a>).
+      </p>
     </div>
   </div>
 </section>
 
 <!-- VERIFY -->
-<section id="verify" class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-20">
-    <div class="section-bar section-label uppercase text-brand">§04 · Verify This Receipt</div>
-    <h2 class="headline text-white text-[40px] md:text-[52px] mt-6 max-w-3xl">
-      Paste the DoCR hash. <br/>
-      <span class="text-brand">Get cryptographic verification in your browser.</span>
-    </h2>
-    <p class="mt-6 text-ink-dim text-[15px] max-w-2xl leading-[1.6]">
-      This is the same <span class="font-mono text-white">POST /audit/verify</span> endpoint any compliance officer, regulator, or opposing counsel can call to confirm a receipt was issued by GoVTraceAI and has not been tampered with.
-    </p>
-
-    <div class="mt-12 panel p-8">
-      <label class="block font-mono text-[10px] tracking-[0.2em] text-ink-faint uppercase mb-3">DoCR ID or Hash</label>
-      <div class="flex flex-col md:flex-row gap-3">
-        <input id="hashInput" class="flex-1 bg-black border border-white/10 rounded-md px-4 py-3.5 font-mono text-sm text-ink focus:outline-none focus:border-brand transition" value="docr_2d7f8a1c4b9e6f03" />
-        <button id="verifyBtn" class="btn-solid rounded-md px-8 py-3.5 text-sm font-semibold">Verify</button>
+<section id="verify" class="sec" aria-labelledby="s04">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-ref"><span class="num">§04</span><span>Verify This Receipt</span></p>
+      <div>
+        <h2 id="s04" class="heading">See how verification works. <br/><em>Then verify a real receipt</em><span class="stop">.</span></h2>
+        <p class="sec-intro">
+          <strong>This block is a simulation.</strong> It runs in your browser against a stored fixture, with a timer standing in for the verifier, so it proves nothing about any receipt. The real verifier checks an Ed25519 signature against GoVTraceAI's published public key: <a href="/verify">verify a real receipt here</a>.
+        </p>
       </div>
-
-      <div id="verifyResult" class="mt-6 hidden"></div>
     </div>
 
-    <div class="mt-4 text-xs text-ink-faint">
-      Production verification calls <span class="font-mono">POST /audit/verify</span> on the GoVTraceAI runtime. This demonstration runs against a fixture receipt.
+    <div class="sec-body indent">
+      <div class="verify-slip">
+        <label for="hashInput" class="label field-label">Sample DoCR ID</label>
+        <div class="verify-row">
+          <input id="hashInput" type="text" spellcheck="false" autocomplete="off" value="docr_2d7f8a1c4b9e6f03" />
+          <button id="verifyBtn" type="button" class="btn btn-ink">Run the simulation</button>
+        </div>
+
+        <div id="verifyResult" class="hidden" aria-live="polite"></div>
+      </div>
+
+      <p class="note">
+        Illustration only. Production verification is done by the GoVTraceAI runtime, not by this page.
+      </p>
     </div>
   </div>
 </section>
 
 <!-- CATEGORY COMPARE -->
-<section class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-20">
-    <div class="section-bar section-label uppercase text-brand">§05 · Why Existing Tools Can't Do This</div>
-    <h2 class="headline text-white text-[40px] md:text-[52px] mt-6 max-w-3xl">
-      The <span class="text-brand">category gap.</span>
-    </h2>
-
-    <div class="mt-12 grid md:grid-cols-2 gap-4">
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-ink-faint uppercase mb-3">DLP / Data Security</div>
-        <div class="text-white font-semibold text-lg mb-2">Purview · BigID · Varonis</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Classify and block data movement. Cannot represent a consent event or sign a runtime decision record.</p>
-      </div>
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-ink-faint uppercase mb-3">GRC / Compliance</div>
-        <div class="text-white font-semibold text-lg mb-2">Vanta · Drata · OneTrust</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Point-in-time posture attestation. No runtime decision layer, no per-event evidence.</p>
-      </div>
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-ink-faint uppercase mb-3">AI Governance</div>
-        <div class="text-white font-semibold text-lg mb-2">Credo · Holistic · Fiddler</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Observability dashboards and model risk scores. Not cryptographic. Not signed. Not admissible.</p>
-      </div>
-      <div class="panel p-6">
-        <div class="font-mono text-[10px] tracking-[0.2em] text-ink-faint uppercase mb-3">EHR Audit Logs</div>
-        <div class="text-white font-semibold text-lg mb-2">Epic · Oracle Health</div>
-        <p class="text-sm text-ink-dim leading-[1.6]">Record what clinicians did in the system. Do not govern what third-party AI did before data entered the chart.</p>
-      </div>
+<section class="sec" aria-labelledby="s05">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-ref"><span class="num">§05</span><span>Where Existing Tools Stop</span></p>
+      <h2 id="s05" class="heading">The <em>category gap</em><span class="stop">.</span></h2>
     </div>
 
-    <div class="mt-6 panel p-6" style="border-color:rgba(212,83,42,0.4);background:linear-gradient(180deg,rgba(212,83,42,0.06),transparent)">
-      <div class="font-mono text-[10px] tracking-[0.2em] text-brand uppercase mb-3">GoVTraceAI</div>
-      <div class="text-white font-semibold text-lg mb-2">The evidence layer for regulated AI.</div>
-      <p class="text-sm text-ink leading-[1.6]">A runtime decision engine that evaluates every AI action against policy and issues a signed, verifiable Duty-of-Care Record before data leaves your systems. Built by gobots.ai.</p>
+    <div class="sec-body">
+      <div class="compare">
+        <article class="tool">
+          <p class="cat">DLP / Data Security</p>
+          <h3 class="heading">Data loss prevention tools</h3>
+          <p>Typically classify and block data movement. Not designed to represent a consent event or sign a runtime decision record.</p>
+        </article>
+        <article class="tool">
+          <p class="cat">GRC / Compliance</p>
+          <h3 class="heading">Compliance automation platforms</h3>
+          <p>Typically point-in-time posture attestation, not per-event runtime evidence.</p>
+        </article>
+        <article class="tool">
+          <p class="cat">AI Governance</p>
+          <h3 class="heading">AI governance and monitoring tools</h3>
+          <p>Typically observability dashboards and model risk scores, not signed per-decision records.</p>
+        </article>
+        <article class="tool">
+          <p class="cat">EHR Audit Logs</p>
+          <h3 class="heading">EHR audit logs</h3>
+          <p>Record what clinicians did in the system. They do not cover what third-party AI did before data entered the chart.</p>
+        </article>
+      </div>
+
+      <div class="ours">
+        <p class="cat">GoVTraceAI</p>
+        <div>
+          <h3 class="heading">A signed record for regulated AI.</h3>
+          <p>A runtime decision engine that evaluates every AI action against policy and issues a signed, verifiable Duty-of-Care Record before data leaves your systems. Built by Gobots.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- CTA -->
-<section class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-24">
-    <div class="section-bar section-label uppercase text-brand">§06 · Run it on your scenario</div>
-    <h2 class="headline text-white text-[40px] md:text-[56px] mt-6 max-w-3xl">
-      Want to see this against a scenario <br/>
-      <span class="text-brand">you actually worry about?</span>
-    </h2>
-    <p class="mt-6 text-ink-dim text-lg max-w-2xl leading-[1.55]">
-      Bring your ambient scribe workflow. Your patient-messaging copilot. Your inbox AI. Your prior-auth model. 20 minutes, live, on your scenario. You'll see the DoCR your compliance team should already have.
-    </p>
-    <div class="mt-10 flex flex-wrap gap-3">
-      <a href="/walkthrough" class="btn-solid rounded-md px-7 py-4 text-sm font-semibold inline-flex items-center gap-2">
-        Request a Walkthrough →
-      </a>
-      <a href="/" class="btn-outline rounded-md px-7 py-4 text-sm font-semibold">Back to gobots.ai</a>
+<section class="sec cta" aria-labelledby="s06">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="sec-ref"><span class="num">§06</span><span>Run it on your scenario</span></p>
+      <div>
+        <h2 id="s06" class="heading">Want to see this against a scenario <br/><em>you actually worry about?</em></h2>
+        <p class="sec-intro">
+          Bring your ambient scribe workflow. Your patient-messaging copilot. Your inbox AI. Your prior-auth model. 20 minutes, live, on your scenario. You'll see the DoCR your compliance team should already have.
+        </p>
+        <div class="btns">
+          <a href="/walkthrough" class="btn btn-ink btn-lg">
+            Book a GoVTraceAI briefing
+            <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M2 7h9.5M7.5 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square"/></svg>
+          </a>
+          <a href="/" class="btn btn-rule btn-lg">Back to Gobots</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
 
+</main>
+
 <!-- FOOTER -->
-<footer class="border-t border-white/5">
-  <div class="max-w-[1280px] mx-auto px-8 py-10 flex flex-wrap items-center justify-between gap-4 text-xs">
-    <div class="flex items-center gap-4">
-      <a href="/" aria-label="gobots.ai home" class="flex items-center">
-        <img src="/gobots-logo.png" alt="gobots.ai" class="h-7 w-auto logo-img" />
-      </a>
-      <span class="text-ink-faint">Evidence layer for regulated AI</span>
-    </div>
-    <div class="font-mono text-ink-faint">© 2026 gobots.ai · Educational counterfactual · Not legal advice</div>
+<footer class="site-foot">
+  <div class="wrap">
+    <a href="/" aria-label="Gobots home" class="brand">
+      <span class="wordmark">gobots<span class="dot">.</span></span>
+      <span class="tag">Full-stack AI company</span>
+    </a>
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="/demo">Live demo</a></li>
+        <li><a href="/verify">Verify</a></li>
+        <li><a href="/spec">Spec</a></li>
+        <li><a href="/walkthrough">Start a sprint</a></li>
+      </ul>
+    </nav>
+    <p class="legal">© 2026 Gobots · gobotsai.com · Educational counterfactual · Not legal advice</p>
   </div>
 </footer>
 
@@ -450,6 +714,10 @@ const fixture = {
 (function loopTerminalLines() {
   const lines = Array.from(document.querySelectorAll('.fade-line'));
   if (!lines.length) return;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    lines.forEach((line) => line.classList.add('is-visible'));
+    return;
+  }
   let timer = null;
 
   function step(i) {
@@ -467,37 +735,41 @@ const fixture = {
   timer = setTimeout(() => step(0), 600);
 })();
 
+const CHECK = '<svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 6.4l2.6 2.6L10 3.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>';
+const CROSS = '<svg width="14" height="14" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 3l6 6M9 3l-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg>';
+
 btn.addEventListener('click', () => {
   const key = input.value.trim();
   out.classList.remove('hidden');
-  out.innerHTML = `<div class="font-mono text-xs text-ink-faint">Verifying signature against issuer key govtrace-issuer-prod-04 …</div>`;
+  out.innerHTML = `<div class="pending">Simulating verification (nothing is being checked) …</div>`;
 
   setTimeout(() => {
     const r = fixture[key];
     if (r) {
       out.innerHTML = `
-        <div class="panel p-6" style="border-color:rgba(74,222,128,0.3);background:linear-gradient(180deg,rgba(74,222,128,0.04),transparent)">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-2.5 h-2.5 rounded-full bg-safe verified-dot"></div>
-            <div class="text-safe font-semibold tracking-wide">SIGNATURE VALID · NOT TAMPERED</div>
-          </div>
-          <div class="grid md:grid-cols-2 gap-x-8 gap-y-2 font-mono text-xs">
-            <div><span class="text-ink-faint">issuer:</span> <span class="text-ink">${r.issuer}</span></div>
-            <div><span class="text-ink-faint">alg:</span> <span class="text-ink">${r.alg}</span></div>
-            <div><span class="text-ink-faint">issued_at:</span> <span class="text-ink">${r.issued_at}</span></div>
-            <div><span class="text-ink-faint">policy:</span> <span class="text-ink">${r.policy}</span></div>
-            <div><span class="text-ink-faint">verdict:</span> <span class="text-brand">${r.verdict}</span></div>
-            <div><span class="text-ink-faint">chain_root:</span> <span class="text-ink">${r.chain_root}</span></div>
-          </div>
+        <div class="result result-ok">
+          <p class="result-title">${CHECK}<span>SIMULATED RESULT · NOT A LIVE VERIFICATION</span></p>
+          <dl class="kv">
+            <div><dt>issuer:</dt> <dd>${r.issuer}</dd></div>
+            <div><dt>alg:</dt> <dd>${r.alg}</dd></div>
+            <div><dt>issued_at:</dt> <dd>${r.issued_at}</dd></div>
+            <div><dt>policy:</dt> <dd>${r.policy}</dd></div>
+            <div><dt>verdict:</dt> <dd class="v">${r.verdict}</dd></div>
+            <div><dt>chain_root:</dt> <dd>${r.chain_root}</dd></div>
+          </dl>
         </div>`;
     } else {
       out.innerHTML = `
-        <div class="panel p-6" style="border-color:rgba(248,113,113,0.3)">
-          <div class="text-danger font-semibold mb-2">RECEIPT NOT FOUND</div>
-          <div class="font-mono text-xs text-ink-dim">No DoCR matching that identifier was issued by this GoVTraceAI instance. Try: <span class="text-white">docr_2d7f8a1c4b9e6f03</span></div>
+        <div class="result result-bad">
+          <p class="result-title">${CROSS}<span>SAMPLE ID NOT RECOGNISED</span></p>
+          <p>This simulation only knows one sample ID. Try: <span>docr_2d7f8a1c4b9e6f03</span></p>
         </div>`;
     }
   }, 700);
+});
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') btn.click();
 });
 </script>
 

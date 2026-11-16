@@ -3,6 +3,7 @@ import DemoClient from './DemoClient'
 
 export const metadata: Metadata = {
   title: 'Live Gatekeeper Demo · GoVTraceAI',
+  alternates: { canonical: '/demo' },
   description:
     'Watch an AI agent try to send a risky action. Watch GoVTraceAI catch it. Inspect the signed Duty-of-Care Record in your browser.',
 }

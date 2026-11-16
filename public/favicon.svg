@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#0D0D0D"/>
-  <text x="16" y="23" font-family="-apple-system,BlinkMacSystemFont,'Inter',sans-serif" font-weight="800" font-size="20" fill="#D4532A" text-anchor="middle" letter-spacing="-0.5">G</text>
+  <rect width="32" height="32" rx="4" fill="#F2F2EE"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="3.5" fill="none" stroke="#121212" stroke-opacity="0.2"/>
+  <text x="14" y="23.5" font-family="Georgia,'Times New Roman',serif" font-weight="500" font-size="23" fill="#121212" text-anchor="middle">g</text>
+  <circle cx="24.5" cy="21.5" r="2.6" fill="#E0643A"/>
 </svg>

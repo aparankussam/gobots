@@ -3,6 +3,7 @@ import VerifyClient from './VerifyClient'
 
 export const metadata: Metadata = {
   title: 'Verify a Receipt · GoVTraceAI',
+  alternates: { canonical: '/verify' },
   description:
     'Paste a GoVTraceAI signed receipt and verify the Ed25519 signature against the published public key. Stateless, offline-capable.',
 }
